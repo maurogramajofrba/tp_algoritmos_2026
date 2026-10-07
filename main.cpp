@@ -1,12 +1,10 @@
 #include <iostream>
-#include "tp-types.h"
+#include "tp_lib.h"
 
 using namespace std;
 
 void menu();
-void CargarAtaqueEnMemoria();
 void MostrarAtaque();
-void CrearNuevoAtaque();
 void CorregirRegistroDeArchivo();
 void CorregirRegistroDeMemoria();
 void GuardarAtaque();
@@ -71,25 +69,8 @@ void menu() {
   } while (opcion);
 }
 
-void CargarAtaqueEnMemoria() {
-  string ruta;
-  string nombreArchivo;
-  cout << endl << "-----------------------------------" << endl;
-  cout << "Cargar en memoria archivo de ataque" << endl;
-  cout << "Decime la ruta del archivo de ataque:" << endl;
-  cin >> ruta;
-  cout << "Decime el nombre del archivo de ataque:" << endl;
-  cin >> nombreArchivo;
-
-
-}
-
 void MostrarAtaque() {
   cout << "Soy la acción MostrarAtaque." << endl;
-}
-
-void CrearNuevoAtaque() {
-  cout << "Soy la acción CrearNuevoAtaque." << endl;
 }
 
 void CorregirRegistroDeArchivo() {

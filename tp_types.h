@@ -1,5 +1,5 @@
-#ifndef TP-TYPES.H
-#define TP-TYPES.H
+#ifndef TP_TYPES_H
+#define TP_TYPES_H
 
 #define ANCHO_MAPA 200
 #define ALTO_MAPA 200
