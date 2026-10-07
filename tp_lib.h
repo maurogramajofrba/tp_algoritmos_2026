@@ -2,6 +2,7 @@
 #define TP_LIB_H
 
 #include "tp_types.h"
+#include "funciones_comunes.h"
 
 void CargarAtaqueEnMemoria();
 void CrearNuevoAtaque();
