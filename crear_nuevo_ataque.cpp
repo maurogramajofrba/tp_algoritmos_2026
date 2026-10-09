@@ -3,166 +3,125 @@
 
 using namespace std;
 
-void CrearNuevoAtaque() {
-  cout << "--------------------------------" << endl << endl;
-  cout << "Soy la acción CrearNuevoAtaque." << endl;
-  cout << endl << "--------------------------------" << endl << endl;
+void MenuNuevoAtaque(FILE *ataque);
+void AgregarOrdenArchivo(FILE *ataque);
+void FinalizarAtaqueNuevo(FILE *ataque);
+
+void CrearNuevoAtaque()
+{
+  string rutaCompleta;
+  FILE *ataque;
+
+  ImprimirSeparador(15, '-', 1, 0);
+  cout << " CREAR ATAQUE NUEVO ";
+  ImprimirSeparador(15, '-', 0, 2);
+
+  cout << "Decime la ruta completa del archivo del nuevo ataque:" << endl;
+  cout << "> ";
+  getline(cin, rutaCompleta);
+
+  ataque = fopen(rutaCompleta.c_str(), "wb");
+
+  if (ataque == NULL)
+  {
+    cout << "No se pudo abrir el archivo: " << rutaCompleta << endl;
+    return;
+  }
+
+  cout << "Archivo abierto correctamente." << endl;
+
+  tAccionesUnicas checkAccionesUnicas;
+  tOrdenArchivo ordenAnterior;
+
+
+  MenuNuevoAtaque(ataque, ordenAnterior, checkAccionesUnicas);
 }
 
-// void CrearNuevoAtaque()
-// {
+void MenuNuevoAtaque(FILE *ataque, tOrdenArchivo ordenAnterior, tAccionesUnicas checkAccionesUnicas)
+{
+  int opcion;
 
-//   string ruta;
-//   string nombreArchivo;
+  do
+  {
+    cout << "1. Agregar orden." << endl;
+    cout << "0. Finalizar." << endl;
 
-//   int opcion;
+    cin >> opcion;
 
-//   cout << endl
-//        << "-----------------------------------" << endl;
-//   cout << "Cargar en memoria archivo de ataque" << endl;
-//   cout << "Decime la ruta del archivo de ataque:" << endl;
-//   cin >> ruta;
-//   cout << "Decime el nombre del archivo de ataque:" << endl;
-//   cin >> nombreArchivo;
+    if (opcion > 0 && opcion < 7)
 
-//   string rutaCompleta = ruta + "\\" + nombreArchivo;
+      switch (opcion)
+      {
+      case 1:
+        AgregarOrdenArchivo(ataque, ordenAnterior, checkAccionesUnicas);
+        EnterParaContinuar();
+        break;
+      case 0:
+        FinalizarAtaqueNuevo(ataque);
+        EnterParaContinuar();
+        break;
 
-//   tOrden *(*pMapa)[ANCHO_MAPA];
+      default:
+        cout << "Opción inválida intente nuevamente!" << endl
+             << endl;
+        EnterParaContinuar();
+        break;
+      }
+  } while (opcion);
+}
 
-//   pMapa = new tOrden *[ALTO_MAPA][ANCHO_MAPA]();
+void AgregarOrdenArchivo(FILE *ataque, tOrdenArchivo ordenAnterior, tAccionesUnicas checkAccionesUnicas)
+{
+  tOrdenArchivo nuevaOrden;
 
-//   // arrancar todos en null
+  if (!checkAccionesUnicas.hayDespegue) {
+    nuevaOrden.despegue = true;
+    cout << "No hay despegue aún, ingrese posición de despegue:" << endl;
+    cout << "x y > ";
+    cin >> nuevaOrden.x >> nuevaOrden.y;
 
-//   do
-//   {
-//     cout << "Nuevo ataque:" << endl;
-//     cout << "1. Agregar orden." << endl;
-//     cout << "2. Modificar orden." << endl;
-//     cout << "3. Mostrar nuevo ataque." << endl;
-//     cout << "4. Crear." << endl;
-//     cout << "0. Cancelar." << endl;
+    menuOrden(ataque, nuevaOrden, checkAccionesUnicas);
+  }
+}
 
-//     cin >> opcion;
+void menuOrden(FILE *ataque, tOrdenArchivo currOrden, tAccionesUnicas checkAccionesUnicas) {
+  int opcion;
 
-//     if (opcion > 0 && opcion < 7)
+  do
+  {
+    if (!currOrden.espera) cout << "1. Esperar" << endl;
+    if (!currOrden.siguienteX || !currOrden.siguienteY) cout << "2. Moverse" << endl;
+    if (!currOrden.soltarGranada1 && !checkAccionesUnicas.soltoGranada1) cout << "3. Soltar granada 1" << endl;
+    if (!currOrden.soltarGranada2 && !checkAccionesUnicas.soltoGranada2) cout << "4. Soltar granada 2" << endl;
+    if (!currOrden.aterrizaje && !checkAccionesUnicas.hayFinViaje) cout << "5. Aterrizar" << endl;
+    if (!currOrden.ataqueKamikaze && !checkAccionesUnicas.hayFinViaje) cout << "6. Ataque kamikaze" << endl;
+    cout << "0. Finalizar" << endl;
 
-//     switch (opcion)
-//     {
-//     case 1:
-//       AgregarOrden(pMapa);
-//       break;
-//     case 2:
-//       ModificarOrden();
-//       break;
-//     case 3:
-//       MostrarAtaque();
-//       break;
-//     case 4:
-//       ConfirmarCreacion(rutaCompleta, pMapa);
-//       break;
-//     case 0:
-//       CancelarCreacion();
-//       break;
+    cin >> opcion;
 
-//     default:
-//       cout << "Opción inválida intente nuevamente!" << endl
-//            << endl;
-//       break;
-//     }
-//   } while (opcion);
+    if (opcion > 0 && opcion < 7)
 
-//   delete[] pMapa;
-// }
+      switch (opcion)
+      {
+      case 1:
+        AgregarOrdenArchivo(ataque, currOrden, checkAccionesUnicas);
+        EnterParaContinuar();
+        break;
+      case 0:
+        FinalizarAtaqueNuevo(ataque);
+        EnterParaContinuar();
+        break;
 
-// void AgregarOrden(tOrden *(*pMapa)[ANCHO_MAPA])
-// {
-//   int x, y;
-//   int codigoOrden;
+      default:
+        cout << "Opción inválida intente nuevamente!" << endl
+             << endl;
+        EnterParaContinuar();
+        break;
+      }
+  } while (opcion);
+}
 
-//   cout << "Ingrese cordeenadas del ataque x y:" << endl;
-//   cin >> x >> y;
-
-//   if (x < 0 || y < 0 || x > ANCHO_MAPA - 1 || y > ALTO_MAPA - 1)
-//   {
-//     cout << "Coordenadas inválidas!!!" << endl;
-//     return;
-//   }
-
-//   if (pMapa[y][x] != nullptr)
-//   {
-//     cout << "Coordenadas ya tienen ordenes!!!" << endl;
-//     return;
-//   }
-
-//   do
-//   {
-//     cout << "Ingrese las ordenes a ejecutar:" << endl;
-//     cout << "1. Despegue." << endl;
-//     cout << "2. Aterrizaje." << endl;
-//     cout << "3. Soltar granada 1" << endl;
-//     cout << "4. Soltar granada 2" << endl;
-//     cout << "5. Ataque Kamikaze" << endl;
-//     cout << "6. Esperar." << endl;
-//     cout << "7. Mover." << endl;
-//     cout << "0. Terminar ordenes." << endl;
-
-//     cin >> codigoOrden;
-
-//     if (codigoOrden > 0 && codigoOrden < 8)
-//     {
-//       if (pMapa[y][x] == nullptr)
-//         pMapa[y][x] = new tOrden();
-//     }
-
-//     switch (codigoOrden)
-//     {
-//     case 1:
-//       pMapa[y][x]->despegue = true;
-//       break;
-//     case 2:
-//       pMapa[y][x]->aterrizaje = true;
-//       break;
-//     case 3:
-//       pMapa[y][x]->soltarGranada1 = true;
-//       break;
-//     case 4:
-//       pMapa[y][x]->soltarGranada2 = true;
-//       break;
-//     case 5:
-//       pMapa[y][x]->ataqueKamikaze = true;
-//       break;
-//     case 6:
-//       cout << "Indique los segundos de espera:" << endl;
-//       cin >> pMapa[y][x]->espera;
-//       break;
-//     case 7:
-//       cout << "Ingrese las coordenadas moverse x y:" << endl;
-//       cin >> pMapa[y][x]->siguienteX >> pMapa[y][x]->siguienteY;
-//       break;
-//     case 0:
-//       break;
-
-//     default:
-//       cout << "Opción inválida intente nuevamente!" << endl
-//            << endl;
-//       break;
-//     }
-//   } while (codigoOrden);
-// }
-
-// void ConfirmarCreacion(string rutaCompleta, tOrden *(*pMapa)[ANCHO_MAPA])
-// {
-//   FILE *nuevoAtaque;
-
-//   nuevoAtaque = fopen(rutaCompleta.c_str(), "wb");
-
-//   if (nuevoAtaque == NULL)
-//   {
-//     cout << "ERROR al crear el archivo!!!" << endl;
-//     return;
-//   }
-
-//   fclose(nuevoAtaque);
-
-//   cout << "Ataque creado con éxito!!!" << endl;
-// }
+void FinalizarAtaqueNuevo(FILE *ataque)
+{
+  fclose(ataque);
+}

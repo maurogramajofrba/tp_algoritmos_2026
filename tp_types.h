@@ -28,4 +28,11 @@ typedef struct OrdenArchivo {
   int siguienteY;
 } tOrdenArchivo;
 
+typedef struct AccionesUnicas {
+  bool hayDespegue;
+  bool hayFinViaje;
+  bool soltoGranada1;
+  bool soltoGranada2;
+} tAccionesUnicas;
+
 #endif

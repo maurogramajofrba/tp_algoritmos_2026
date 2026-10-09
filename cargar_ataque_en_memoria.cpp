@@ -3,16 +3,27 @@
 
 using namespace std;
 
-void CargarAtaqueEnMemoria() {
-  string ruta;
-  string nombreArchivo;
-  cout << "--------------------------------" << endl << endl;
-  cout << "Cargar en memoria archivo de ataque" << endl;
-  cout << "Decime la ruta del archivo de ataque:" << endl;
-  cin >> ruta;
-  cout << "Decime el nombre del archivo de ataque:" << endl;
-  cin >> nombreArchivo;
+void CargarAtaqueEnMemoria()
+{
+  string rutaCompleta;
+  FILE *ataque;
 
-  cout << "Ruta ingresada: " << ruta << "/" << nombreArchivo << endl;
-  cout << endl << "--------------------------------" << endl << endl;
+  ImprimirSeparador(15, '-', 1, 0);
+  cout << " CARGAR ATAQUE EN MEMORIA ";
+  ImprimirSeparador(15, '-', 0, 2);
+  cout << "Decime la ruta completa del archivo de ataque:" << endl;
+  cout << "> ";
+  getline(cin, rutaCompleta);
+
+  ataque = fopen(rutaCompleta.c_str(), "rb");
+
+  if (ataque == NULL)
+  {
+    cout << "No se pudo abrir el archivo: " << rutaCompleta << endl;
+    return;
+  }
+
+  cout << "Archivo abierto correctamente." << endl;
+
+  fclose(ataque);
 }
