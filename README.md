@@ -1,5 +1,13 @@
 # tp_algoritmos_2026
 
+## NO PUSHAR COSAS SIN COMPILAR PEDIR AYUDA Y HABLAR EN EL GRUPO
+
+## Cómo arrancar a trabajar y hacer cambios?
+SIEMPRE HACER GIT PULL
+1. Si hay conflictos y problemas hablar al grupo
+2. En caso de demorar mucho intentar resolverlo
+3. Consultar con chatGPT
+
 ## Cómo compilar?
 Ejecutar el siguiente comando
 ```cmd

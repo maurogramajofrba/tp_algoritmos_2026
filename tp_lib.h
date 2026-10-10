@@ -6,6 +6,7 @@
 #include "funciones_comunes.h"
 
 void CargarAtaqueEnMemoria();
+void MostrarAtaque();
 void CrearNuevoAtaque();
 //Agregar aquí interfaces
 

@@ -3,8 +3,9 @@
 
 using namespace std;
 
-void MenuNuevoAtaque(FILE *ataque);
-void AgregarOrdenArchivo(FILE *ataque);
+void MenuNuevoAtaque(FILE *ataque, tOrdenArchivo ordenAnterior, tAccionesUnicas checkAccionesUnicas);
+void AgregarOrdenArchivo(FILE *ataque, tOrdenArchivo ordenAnterior, tAccionesUnicas checkAccionesUnicas);
+void menuOrden(FILE *ataque, tOrdenArchivo currOrden, tAccionesUnicas checkAccionesUnicas);
 void FinalizarAtaqueNuevo(FILE *ataque);
 
 void CrearNuevoAtaque()
