@@ -4,7 +4,6 @@
 using namespace std;
 
 void menu();
-void CorregirRegistroDeArchivo();
 void CorregirRegistroDeMemoria();
 void GuardarAtaque();
 void VisualizarAtaqueHTML();
@@ -79,10 +78,6 @@ void menu() {
         break;
     }
   } while (opcion);
-}
-
-void CorregirRegistroDeArchivo() {
-  cout << "Soy la acción CorregirRegistroDeArchivo." << endl;
 }
 
 void CorregirRegistroDeMemoria() {
