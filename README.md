@@ -3,7 +3,7 @@
 ## NO PUSHAR COSAS SIN COMPILAR PEDIR AYUDA Y HABLAR EN EL GRUPO
 
 ## Cómo arrancar a trabajar y hacer cambios?
-SIEMPRE HACER GIT PULL
+SIEMPRE HACER `git pull`
 1. Si hay conflictos y problemas hablar al grupo
 2. En caso de demorar mucho intentar resolverlo
 3. Consultar con chatGPT
@@ -38,3 +38,7 @@ Ejecutar el siguiente comando
     ```
 2. Agregar la interfaz de la función común en **funciones_comunes.h**
 3. Volver a compilar el proyecto
+
+## GIT comandos basicos
+1. `git pull` trae cambios de repo de la nube(remoto)
+2. `git status` 
