@@ -41,4 +41,8 @@ Ejecutar el siguiente comando
 
 ## GIT comandos basicos
 1. `git pull` trae cambios de repo de la nube(remoto)
-2. `git status` 
+2. `git status` te dice que archivos modificaste
+3. `git add .` agrega todos los archivos modificados a commitear
+4. `git commit -m 'mensaje del trabajo hice/cambios que hice'` crea un commit (un registro de cambios) con un mensaje de que es lo que pasó
+5. `git push` envío mis cambios al repo de la nube
+6. `git log` veo el historial de commits
