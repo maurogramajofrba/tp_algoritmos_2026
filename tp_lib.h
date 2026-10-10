@@ -8,6 +8,7 @@
 void CargarAtaqueEnMemoria();
 void MostrarAtaque();
 void CrearNuevoAtaque();
+void CorregirRegistroDeMemoria();
 void GuardarAtaque();
 //Agregar aquí interfaces
 

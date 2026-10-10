@@ -5,7 +5,6 @@ using namespace std;
 
 void menu();
 void CorregirRegistroDeArchivo();
-void CorregirRegistroDeMemoria();
 void VisualizarAtaqueHTML();
 void FinalizarPrograma();
 
@@ -82,10 +81,6 @@ void menu() {
 
 void CorregirRegistroDeArchivo() {
   cout << "Soy la acción CorregirRegistroDeArchivo." << endl;
-}
-
-void CorregirRegistroDeMemoria() {
-  cout << "Soy la acción CorregirRegistroDeMemoria." << endl;
 }
 
 void VisualizarAtaqueHTML() {
