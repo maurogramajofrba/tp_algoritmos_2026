@@ -26,4 +26,5 @@ void ImprimirSeparador(int len, char caracter, int saltosSuperior, int saltosInf
 void EnterParaContinuar() {
   cout << endl << "Presione ENTER para continuar..." << flush;
   cin.get();
+  cout << endl << endl;
 }

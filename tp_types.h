@@ -33,6 +33,8 @@ typedef struct AccionesUnicas {
   bool hayFinViaje;
   bool soltoGranada1;
   bool soltoGranada2;
+  int moverseX;
+  int moverseY;
 } tAccionesUnicas;
 
 #endif
