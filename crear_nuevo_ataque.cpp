@@ -1,16 +1,18 @@
-#include <iostream>
 #include "tp_lib.h"
+#include <iostream>
 
 using namespace std;
 
-void AgregarOrdenArchivo(FILE *ataque, tAccionesUnicas *checkAccionesUnicas);
-void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tAccionesUnicas *checkAccionesUnicas);
+void AgregarOrdenArchivo(FILE *ataque, tChecksAtaque *checksAtaque);
+void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tChecksAtaque *checksAtaque);
 void FinalizarSinGuardar(FILE *ataque, string rutaCompleta);
 
 bool EsMovimientoValido(int x, int y, int prevX = -1, int prevY = -1);
+void InsertarPosicionOrdenada(int posicionesUsadas[], int *cantPosiciones, int nuevaPosicion);
+bool PosicionUsada(int posicionesUsadas[], int cantPosiciones, int nuevaPosicion);
+int CodificarCoordenada(int x, int y);
 
-void CrearNuevoAtaque()
-{
+void CrearNuevoAtaque() {
   string rutaCompleta;
   FILE *ataque;
 
@@ -24,130 +26,115 @@ void CrearNuevoAtaque()
 
   ataque = fopen(rutaCompleta.c_str(), "wb");
 
-  if (ataque == NULL)
-  {
+  if (ataque == NULL) {
     cout << "No se pudo abrir el archivo: " << rutaCompleta << endl;
     return;
   }
 
   cout << "Archivo abierto correctamente." << endl;
 
-  tAccionesUnicas checkAccionesUnicas = {};
-  checkAccionesUnicas.moverseX = -1;
-  checkAccionesUnicas.moverseY = -1;
+  tChecksAtaque checksAtaque = {};
+  checksAtaque.moverseX = -1;
+  checksAtaque.moverseY = -1;
 
   int opcion;
 
-  do
-  {
-    if (checkAccionesUnicas.hayDespegue)
+  do {
+    if (checksAtaque.hayDespegue)
       cout << "El dron despega con exito." << endl;
-    if (checkAccionesUnicas.soltoGranada1)
+    if (checksAtaque.soltoGranada1)
       cout << "El dron soltó la granada 1." << endl;
-    if (checkAccionesUnicas.soltoGranada2)
+    if (checksAtaque.soltoGranada2)
       cout << "El dron soltó la granada 2." << endl;
-    if (checkAccionesUnicas.hayFinViaje)
-      cout << "Ya finalizó el viaje." << endl;
+    if (checksAtaque.hayAterrizaje)
+      cout << "El dron aterrizo." << endl;
+    if (checksAtaque.hayAtaqueKamikaze)
+      cout << "El dron hizo ataque kamikaze." << endl;
 
-    if (!checkAccionesUnicas.hayFinViaje)
+    if (!(checksAtaque.hayAterrizaje || checksAtaque.hayAtaqueKamikaze))
       cout << "1. Agregar orden." << endl;
     else
       cout << "1. Ataque finalizado! volver al menú principal." << endl;
-    if (!checkAccionesUnicas.hayFinViaje)
-      cout << "0. Cancelar creación neuvo ataque." << endl;
+
+    cout << "0. Cancelar creación neuvo ataque." << endl;
 
     cin >> opcion;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    switch (opcion)
-    {
+    switch (opcion) {
     case 1:
-      if (!checkAccionesUnicas.hayFinViaje)
-      {
-        AgregarOrdenArchivo(ataque, &checkAccionesUnicas);
+      if (!(checksAtaque.hayAterrizaje || checksAtaque.hayAtaqueKamikaze)) {
+        AgregarOrdenArchivo(ataque, &checksAtaque);
         break;
-      }
-      else
-      {
+      } else {
         fclose(ataque);
         return;
       }
     case 0:
-      if (!checkAccionesUnicas.hayFinViaje)
-      {
-        FinalizarSinGuardar(ataque, rutaCompleta);
-        break;
-      }
-      else
-      {
-      }
-
+      FinalizarSinGuardar(ataque, rutaCompleta);
+      break;
     default:
-      cout << "Opción inválida intente nuevamente!" << endl
-           << endl;
-      EnterParaContinuar();
+      cout << "Opción inválida intente nuevamente!" << endl << endl;
+
       break;
     }
   } while (opcion);
 }
 
-void AgregarOrdenArchivo(FILE *ataque, tAccionesUnicas *checkAccionesUnicas)
-{
+void AgregarOrdenArchivo(FILE *ataque, tChecksAtaque *checksAtaque) {
   tOrdenArchivo nuevaOrden = {};
-  nuevaOrden.x = checkAccionesUnicas->moverseX;
-  nuevaOrden.y = checkAccionesUnicas->moverseY;
+  nuevaOrden.x = checksAtaque->moverseX;
+  nuevaOrden.y = checksAtaque->moverseY;
 
-  if (!checkAccionesUnicas->hayDespegue)
-  {
+  if (!checksAtaque->hayDespegue) {
     nuevaOrden.despegue = true;
-    do
-    {
-      cout << "No hay despegue aún, ingrese posición de despegue válida:" << endl;
+    do {
+      cout << "Indique donde despegara el dron:" << endl;
       cout << "x y > ";
       cin >> nuevaOrden.x >> nuevaOrden.y;
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
     } while (!EsMovimientoValido(nuevaOrden.x, nuevaOrden.y));
-    checkAccionesUnicas->hayDespegue = true;
+    checksAtaque->hayDespegue = true;
   }
 
-  menuOrden(ataque, &nuevaOrden, checkAccionesUnicas);
+  menuOrden(ataque, &nuevaOrden, checksAtaque);
 }
 
-void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tAccionesUnicas *checkAccionesUnicas)
-{
+void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tChecksAtaque *checksAtaque) {
   int opcion;
 
-  do
-  {
+  do {
     cout << "El dron está en x: " << currOrden->x << " y: " << currOrden->y << endl
-         << "Realiza las siguientes acciones:" << endl
-         << endl;
+         << "Realiza las siguientes acciones:" << endl;
     if (currOrden->despegue)
       cout << "Despega." << endl;
-    if (currOrden->espera)
-      cout << "Espera " << currOrden->espera << " segundos." << endl;
-    if (currOrden->siguienteX && currOrden->siguienteY)
-      cout << "Se mueve a x: " << currOrden->siguienteX << " y:" << currOrden->siguienteY << endl;
+    if (currOrden->aterrizaje)
+      cout << "Aterriza." << endl;
     if (currOrden->soltarGranada1)
       cout << "Suelta granada 1." << endl;
     if (currOrden->soltarGranada2)
       cout << "Suelta granada 2." << endl;
-    if (currOrden->aterrizaje)
-      cout << "Aterriza." << endl;
     if (currOrden->ataqueKamikaze)
       cout << "Hace ataque kamikaze." << endl;
+    if (currOrden->espera)
+      cout << "Espera " << currOrden->espera << " segundos." << endl;
+    if (currOrden->siguienteX && currOrden->siguienteY)
+      cout << "Se mueve a x: " << currOrden->siguienteX << " y:" << currOrden->siguienteY << endl;
 
     if (!currOrden->espera)
       cout << "1. Esperar" << endl;
-    if (!(currOrden->siguienteX || currOrden->siguienteY) && !currOrden->ataqueKamikaze && !currOrden->aterrizaje && !checkAccionesUnicas->hayFinViaje)
+    if (!(currOrden->siguienteX || currOrden->siguienteY) && !currOrden->ataqueKamikaze &&
+        !currOrden->aterrizaje && !checksAtaque->hayAterrizaje && !checksAtaque->hayAtaqueKamikaze)
       cout << "2. Moverse" << endl;
-    if (!currOrden->soltarGranada1 && !checkAccionesUnicas->soltoGranada1 && !currOrden->despegue)
+    if (!currOrden->despegue && !currOrden->soltarGranada1 && !checksAtaque->soltoGranada1)
       cout << "3. Soltar granada 1" << endl;
-    if (!currOrden->soltarGranada2 && !checkAccionesUnicas->soltoGranada2 && !currOrden->despegue)
+    if (!currOrden->despegue && !currOrden->soltarGranada2 && !checksAtaque->soltoGranada2)
       cout << "4. Soltar granada 2" << endl;
-    if (!currOrden->aterrizaje && !checkAccionesUnicas->hayFinViaje && !currOrden->despegue)
+    if (!currOrden->despegue && !currOrden->aterrizaje && !checksAtaque->hayAterrizaje &&
+        !checksAtaque->hayAtaqueKamikaze)
       cout << "5. Aterrizar" << endl;
-    if (!currOrden->ataqueKamikaze && !checkAccionesUnicas->hayFinViaje && !currOrden->despegue)
+    if (!currOrden->despegue && !currOrden->ataqueKamikaze && !checksAtaque->hayAterrizaje &&
+        !checksAtaque->hayAtaqueKamikaze)
       cout << "6. Ataque kamikaze" << endl;
     cout << "7. Cancelar orden" << endl;
 
@@ -157,74 +144,65 @@ void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tAccionesUnicas *checkAcc
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     bool opcionValida = false;
 
-    switch (opcion)
-    {
+    switch (opcion) {
     case 1:
-      if (!currOrden->espera)
-      {
+      if (!currOrden->espera) {
         opcionValida = true;
-        do
-        {
+        do {
           cout << "Ingrese segundos a esperar válidos:" << endl;
           cin >> currOrden->espera;
           cin.ignore(numeric_limits<streamsize>::max(), '\n');
         } while (currOrden->espera < 1);
-
-        EnterParaContinuar();
       }
       break;
     case 2:
-      if (!(currOrden->siguienteX || currOrden->siguienteY) && !currOrden->ataqueKamikaze && !currOrden->aterrizaje && !checkAccionesUnicas->hayFinViaje)
-      {
+      if (!currOrden->siguienteX && !currOrden->siguienteY && !currOrden->ataqueKamikaze &&
+          !currOrden->aterrizaje && !checksAtaque->hayAterrizaje &&
+          !checksAtaque->hayAtaqueKamikaze) {
         opcionValida = true;
-        do
-        {
+        do {
           cout << "Ingresa la posición válida a moverse:" << endl;
           cout << "x y > ";
           cin >> currOrden->siguienteX >> currOrden->siguienteY;
           cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        } while (!EsMovimientoValido(currOrden->siguienteX, currOrden->siguienteY, currOrden->x, currOrden->y));
-        EnterParaContinuar();
+        } while (!EsMovimientoValido(currOrden->siguienteX, currOrden->siguienteY, currOrden->x,
+                                     currOrden->y) ||
+                 PosicionUsada(checksAtaque->posicionesUsadas, checksAtaque->cantPosiciones,
+                               CodificarCoordenada(currOrden->siguienteX, currOrden->siguienteY)));
       }
       break;
     case 3:
-      if (!currOrden->soltarGranada1 && !checkAccionesUnicas->soltoGranada1 && !currOrden->despegue)
-      {
+      if (!currOrden->soltarGranada1 && !checksAtaque->soltoGranada1 && !currOrden->despegue) {
         opcionValida = true;
         currOrden->soltarGranada1 = true;
-        checkAccionesUnicas->soltoGranada1 = true;
+        checksAtaque->soltoGranada1 = true;
         cout << "Se soltará la granada 1 en esta orden" << endl;
-        EnterParaContinuar();
       }
       break;
     case 4:
-      if (!currOrden->soltarGranada2 && !checkAccionesUnicas->soltoGranada2 && !currOrden->despegue)
-      {
+      if (!currOrden->soltarGranada2 && !checksAtaque->soltoGranada2 && !currOrden->despegue) {
         opcionValida = true;
         currOrden->soltarGranada2 = true;
-        checkAccionesUnicas->soltoGranada2 = true;
+        checksAtaque->soltoGranada2 = true;
         cout << "Se soltará la granada 2 en esta orden" << endl;
-        EnterParaContinuar();
       }
       break;
     case 5:
-      if (!currOrden->aterrizaje && !checkAccionesUnicas->hayFinViaje && !currOrden->despegue)
-      {
+      if (!currOrden->despegue && !currOrden->aterrizaje && !checksAtaque->hayAterrizaje &&
+          !checksAtaque->hayAtaqueKamikaze) {
         opcionValida = true;
         currOrden->aterrizaje = true;
-        checkAccionesUnicas->hayFinViaje = true;
+        checksAtaque->hayAterrizaje = true;
         cout << "Se aterrizará en esta posición" << endl;
-        EnterParaContinuar();
       }
       break;
     case 6:
-      if (!currOrden->ataqueKamikaze && !checkAccionesUnicas->hayFinViaje && !currOrden->despegue)
-      {
+      if (!currOrden->despegue && !currOrden->ataqueKamikaze && !checksAtaque->hayAterrizaje &&
+          !checksAtaque->hayAtaqueKamikaze) {
         opcionValida = true;
         currOrden->ataqueKamikaze = true;
-        checkAccionesUnicas->hayFinViaje = true;
+        checksAtaque->hayAtaqueKamikaze = true;
         cout << "Se hará el ataque kamikaze en esta posición" << endl;
-        EnterParaContinuar();
       }
       break;
 
@@ -233,48 +211,44 @@ void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tAccionesUnicas *checkAcc
       opcionValida = true;
 
       if (currOrden->despegue)
-        checkAccionesUnicas->hayDespegue = false;
+        checksAtaque->hayDespegue = false;
       if (currOrden->soltarGranada1)
-        checkAccionesUnicas->soltoGranada1 = false;
+        checksAtaque->soltoGranada1 = false;
       if (currOrden->soltarGranada2)
-        checkAccionesUnicas->soltoGranada2 = false;
+        checksAtaque->soltoGranada2 = false;
       if (currOrden->ataqueKamikaze)
-        checkAccionesUnicas->hayFinViaje = false;
+        checksAtaque->hayAtaqueKamikaze = false;
       if (currOrden->aterrizaje)
-        checkAccionesUnicas->hayFinViaje = false;
-      EnterParaContinuar();
+        checksAtaque->hayAterrizaje = false;
+
       return;
     case 0:
-      if ((currOrden->siguienteX && currOrden->siguienteY) || currOrden->aterrizaje || currOrden->ataqueKamikaze)
-      {
+      if ((currOrden->siguienteX && currOrden->siguienteY) || currOrden->aterrizaje ||
+          currOrden->ataqueKamikaze) {
         opcionValida = true;
         fwrite(currOrden, sizeof(tOrdenArchivo), 1, ataque);
-        checkAccionesUnicas->moverseX = currOrden->siguienteX;
-        checkAccionesUnicas->moverseY = currOrden->siguienteY;
+        InsertarPosicionOrdenada(checksAtaque->posicionesUsadas, &checksAtaque->cantPosiciones,
+                                 (CodificarCoordenada(currOrden->x, currOrden->y)));
+        checksAtaque->moverseX = currOrden->siguienteX;
+        checksAtaque->moverseY = currOrden->siguienteY;
         cout << "Se guardó la orden con éxito!!" << endl;
-        EnterParaContinuar();
       }
     default:
       break;
     }
 
-    if (!opcionValida)
-    {
-      cout << "Opción inválida intente nuevamente!" << endl
-           << endl;
-      EnterParaContinuar();
+    if (!opcionValida) {
+      cout << "Opción inválida intente nuevamente!" << endl << endl;
     }
   } while (opcion);
 }
 
-void FinalizarSinGuardar(FILE *ataque, string rutaCompleta)
-{
+void FinalizarSinGuardar(FILE *ataque, string rutaCompleta) {
   fclose(ataque);
   remove(rutaCompleta.c_str());
 }
 
-bool EsMovimientoValido(int x, int y, int prevX, int prevY)
-{
+bool EsMovimientoValido(int x, int y, int prevX, int prevY) {
   bool movimientoValido = true;
 
   if (x == prevX && y == prevY)
@@ -282,27 +256,58 @@ bool EsMovimientoValido(int x, int y, int prevX, int prevY)
   if (x >= ANCHO_MAPA || y >= ALTO_MAPA)
     movimientoValido = false;
 
-  if (prevX < 0)
-  {
+  if (prevX < 0) {
     if (x < 0 || x >= ANCHO_MAPA)
       movimientoValido = false;
-  }
-  else
-  {
+  } else {
     if (std::abs(x - prevX) > 1)
       movimientoValido = false;
   }
 
-  if (prevY < 0)
-  {
+  if (prevY < 0) {
     if (y < 0 || y >= ALTO_MAPA)
       movimientoValido = false;
-  }
-  else
-  {
+  } else {
     if (std::abs(y - prevY) > 1)
       movimientoValido = false;
   }
 
   return movimientoValido;
 }
+
+void InsertarPosicionOrdenada(int posicionesUsadas[], int *cantPosiciones, int nuevaPosicion) {
+  int aux = (*cantPosiciones) - 1;
+
+  while (aux >= 0 && posicionesUsadas[aux] > nuevaPosicion) {
+    posicionesUsadas[aux + 1] = posicionesUsadas[aux];
+    aux--;
+  }
+
+  posicionesUsadas[aux + 1] = nuevaPosicion;
+  (*cantPosiciones)++;
+}
+
+bool PosicionUsada(int posicionesUsadas[], int cantPosiciones, int nuevaPosicion) {
+  int indiceInferior = 0;
+  int indiceSuperior = cantPosiciones - 1;
+  int indiceCentro;
+  bool encontradaUbicacion = false;
+
+  while (indiceInferior <= indiceSuperior && !encontradaUbicacion) {
+    indiceCentro = (indiceSuperior + indiceInferior) / 2;
+
+    if (posicionesUsadas[indiceCentro] == nuevaPosicion) {
+      encontradaUbicacion = true;
+    } else {
+      if (nuevaPosicion < posicionesUsadas[indiceCentro]) {
+        indiceSuperior = indiceCentro - 1;
+      } else {
+        indiceInferior = indiceCentro + 1;
+      }
+    }
+  }
+
+  return encontradaUbicacion;
+}
+
+int CodificarCoordenada(int x, int y) { return x * ALTO_MAPA + y; }

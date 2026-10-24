@@ -28,13 +28,16 @@ typedef struct OrdenArchivo {
   int siguienteY;
 } tOrdenArchivo;
 
-typedef struct AccionesUnicas {
+typedef struct ChecksAtaque {
   bool hayDespegue;
-  bool hayFinViaje;
   bool soltoGranada1;
   bool soltoGranada2;
+  bool hayAterrizaje;
+  bool hayAtaqueKamikaze;
+  int cantPosiciones;
+  int posicionesUsadas[ANCHO_MAPA * ALTO_MAPA - 1];
   int moverseX;
   int moverseY;
-} tAccionesUnicas;
+} tChecksAtaque;
 
 #endif
