@@ -11,6 +11,7 @@ void CrearNuevoAtaque();
 void CorregirRegistroDeMemoria();
 void GuardarAtaque();
 void CorregirRegistroDeArchivo();
+void VisualizarAtaqueHTML();
 
 //Agregar aquí interfaces
 

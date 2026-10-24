@@ -4,7 +4,6 @@
 using namespace std;
 
 void menu();
-void VisualizarAtaqueHTML();
 void FinalizarPrograma();
 
 tOrden (*pMapa)[ANCHO_MAPA];
@@ -76,10 +75,6 @@ void menu() {
         break;
     }
   } while (opcion);
-}
-
-void VisualizarAtaqueHTML() {
-  cout << "Soy la acción VisualizarAtaqueHTML." << endl;
 }
 
 void FinalizarPrograma() {
