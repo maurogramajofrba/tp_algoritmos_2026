@@ -6,11 +6,11 @@ using namespace std;
 void menu();
 void FinalizarPrograma();
 
-tOrden (*pMapa)[ANCHO_MAPA];
+tMapaAtaque* pMapa = nullptr;
 
 int main() {
-  pMapa = new tOrden[ALTO_MAPA][ANCHO_MAPA]();
   menu();
+  delete pMapa;
   return 0;
 }
 
@@ -37,11 +37,11 @@ void menu() {
     switch (opcion)
     {
       case 1:
-        CargarAtaqueEnMemoria();
+        CargarAtaqueEnMemoria(pMapa);
         EnterParaContinuar();
         break;
       case 2:
-        MostrarAtaque();
+        MostrarAtaque(pMapa);
         EnterParaContinuar();
         break;
       case 3:

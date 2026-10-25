@@ -1,8 +1,14 @@
-#include <iostream>
 #include "tp_lib.h"
+#include <iostream>
+
 using namespace std;
-extern tOrden (*pMapa)[ANCHO_MAPA];
-void MostrarAtaque() {
+
+void MostrarAtaque(tMapaAtaque *pMapa) {
+  if (pMapa == nullptr) {
+    cout << "No hay ataque cargado en memoria!!!" << endl;
+    return;
+  }
+
   ImprimirSeparador(15, '-', 1, 0);
   cout << " MOSTRAR ATAQUE CARGADO ";
   ImprimirSeparador(15, '-', 0, 2);
@@ -11,7 +17,7 @@ void MostrarAtaque() {
   bool encontrado = false;
   for (int x = 0; x < ANCHO_MAPA && !encontrado; x++) {
     for (int y = 0; y < ALTO_MAPA && !encontrado; y++) {
-      if (pMapa[x][y].despegue) {
+      if (pMapa->ordenes[x][y].despegue) {
         xActual = x;
         yActual = y;
         encontrado = true;
@@ -25,7 +31,7 @@ void MostrarAtaque() {
   int registrosImpresos = 0;
   bool finRuta = false;
   while (!finRuta) {
-    tOrden celda = pMapa[xActual][yActual];
+    tOrden celda = pMapa->ordenes[xActual][yActual];
     cout << "[X: " << xActual << ", Y: " << yActual << "] -> Acciones: ";
     bool hizoAlgo = false;
     if (celda.despegue) {
