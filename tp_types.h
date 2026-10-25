@@ -34,8 +34,10 @@ typedef struct ChecksAtaque {
   bool soltoGranada2;
   bool hayAterrizaje;
   bool hayAtaqueKamikaze;
-  int cantPosiciones;
-  int posicionesUsadas[ANCHO_MAPA * ALTO_MAPA - 1];
+  int coordenadaDespegueX;
+  int coordenadaDespegueY;
+  int cantCoordenadas;
+  bool coordenadasUsadas[ANCHO_MAPA][ALTO_MAPA];
   int moverseX;
   int moverseY;
 } tChecksAtaque;

@@ -7,10 +7,12 @@ void menu();
 void FinalizarPrograma();
 
 tMapaAtaque* pMapa = nullptr;
+tChecksAtaque* checksAtaque = nullptr;
 
 int main() {
   menu();
   delete pMapa;
+  delete checksAtaque;
   return 0;
 }
 
@@ -37,7 +39,7 @@ void menu() {
     switch (opcion)
     {
       case 1:
-        CargarAtaqueEnMemoria(pMapa);
+        CargarAtaqueEnMemoria(pMapa, checksAtaque);
         EnterParaContinuar();
         break;
       case 2:

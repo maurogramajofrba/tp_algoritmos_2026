@@ -5,7 +5,7 @@
 #include "tp_types.h"
 #include "funciones_comunes.h"
 
-void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa);
+void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa, tChecksAtaque *&checksAtaque);
 void MostrarAtaque(tMapaAtaque *pMapa);
 void CrearNuevoAtaque();
 void CorregirRegistroDeMemoria();

@@ -21,4 +21,6 @@ void ImprimirSeparador(
 
 void EnterParaContinuar();
 
+bool EsMovimientoValido(int x, int y, int prevX = -1, int prevY = -1);
+
 #endif
