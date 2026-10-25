@@ -4,9 +4,10 @@
 #include <limits>
 #include "tp_types.h"
 #include "funciones_comunes.h"
+#include <string>
 
-void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa, tChecksAtaque *&checksAtaque);
-void MostrarAtaque(tMapaAtaque *pMapa);
+void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa, tChecksAtaque *&checksAtaque, std::string &rutaCompleta);
+void MostrarAtaque(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque);
 void CrearNuevoAtaque();
 void CorregirRegistroDeMemoria();
 void GuardarAtaque();

@@ -3,8 +3,10 @@
 
 using namespace std;
 
-void MostrarAtaque(tMapaAtaque *pMapa) {
-  if (pMapa == nullptr) {
+void ImprimirOrden(tOrden orden, int x, int y);
+
+void MostrarAtaque(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque) {
+  if (pMapa == nullptr || checksAtaque == nullptr) {
     cout << "No hay ataque cargado en memoria!!!" << endl;
     return;
   }
@@ -12,68 +14,45 @@ void MostrarAtaque(tMapaAtaque *pMapa) {
   ImprimirSeparador(15, '-', 1, 0);
   cout << " MOSTRAR ATAQUE CARGADO ";
   ImprimirSeparador(15, '-', 0, 2);
-  int xActual = -1;
-  int yActual = -1;
-  bool encontrado = false;
-  for (int x = 0; x < ANCHO_MAPA && !encontrado; x++) {
-    for (int y = 0; y < ALTO_MAPA && !encontrado; y++) {
-      if (pMapa->ordenes[x][y].despegue) {
-        xActual = x;
-        yActual = y;
-        encontrado = true;
-      }
-    }
+
+  int i = checksAtaque->coordenadaDespegueX;
+  int j = checksAtaque->coordenadaDespegueY;
+
+  while (!pMapa->ordenes[i][j].aterrizaje && !pMapa->ordenes[i][j].ataqueKamikaze) {
+    ImprimirOrden(pMapa->ordenes[i][j], i, j);
+
+    int aux = i;
+    i = pMapa->ordenes[i][j].siguienteX;
+    j = pMapa->ordenes[aux][j].siguienteY;
   }
-  if (!encontrado) {
-    cout << "No hay ningun ataque cargado en memoria." << endl;
-    return;
-  }
-  int registrosImpresos = 0;
-  bool finRuta = false;
-  while (!finRuta) {
-    tOrden celda = pMapa->ordenes[xActual][yActual];
-    cout << "[X: " << xActual << ", Y: " << yActual << "] -> Acciones: ";
-    bool hizoAlgo = false;
-    if (celda.despegue) {
-      cout << "Despegue ";
-      hizoAlgo = true;
+  ImprimirOrden(pMapa->ordenes[i][j], i, j);
+}
+
+void ImprimirOrden(tOrden orden, int x, int y) {
+    cout << "[X: " << x << ", Y: " << y << "] -> Acciones: ";
+
+    if (orden.despegue) {
+      cout << "Despegue         ";
     }
-    if (celda.aterrizaje) {
-      cout << "Aterrizaje ";
-      hizoAlgo = true;
+    if (orden.aterrizaje) {
+      cout << "Aterrizaje       ";
     }
-    if (celda.soltarGranada1) {
+    if (orden.soltarGranada1) {
       cout << "Soltar Granada 1 ";
-      hizoAlgo = true;
     }
-    if (celda.soltarGranada2) {
+    if (orden.soltarGranada2) {
       cout << "Soltar Granada 2 ";
-      hizoAlgo = true;
     }
-    if (celda.ataqueKamikaze) {
-      cout << "Ataque Kamikaze ";
-      hizoAlgo = true;
+    if (orden.ataqueKamikaze) {
+      cout << "Ataque Kamikaze  ";
     }
-    if (celda.espera > 0) {
-      cout << "Esperar " << celda.espera << "s ";
-      hizoAlgo = true;
+    if (orden.espera > 0) {
+      cout << "Esperar " << orden.espera << "s ";
     }
 
-    if (!hizoAlgo) {
-      cout << "Mover ";
-    }
-    if (celda.aterrizaje || celda.ataqueKamikaze) {
-      cout << "| FIN DE LA RUTA" << endl;
-      finRuta = true;
+    if (orden.ataqueKamikaze || orden.aterrizaje) {
+      cout << "| Fin de viaje " << endl;
     } else {
-      cout << "| Siguiente: [" << celda.siguienteX << ", " << celda.siguienteY << "]" << endl;
-      xActual = celda.siguienteX;
-      yActual = celda.siguienteY;
+      cout << "| Siguiente: [" << orden.siguienteX << ", " << orden.siguienteY << "]" << endl;
     }
-    registrosImpresos++;
-    if (registrosImpresos % 15 == 0 && !finRuta) {
-      EnterParaContinuar();
-      cout << endl;
-    }
-  }
 }

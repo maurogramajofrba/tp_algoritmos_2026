@@ -3,8 +3,7 @@
 
 using namespace std;
 
-void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa, tChecksAtaque *&checksAtaque) {
-  string rutaCompleta;
+void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa, tChecksAtaque *&checksAtaque, string &rutaCompleta) {
   FILE *ataque;
 
   delete pMapa;
