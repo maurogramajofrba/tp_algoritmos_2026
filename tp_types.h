@@ -40,4 +40,8 @@ typedef struct ChecksAtaque {
   int moverseY;
 } tChecksAtaque;
 
+typedef struct MapaAtaque {
+  tOrden ordenes[ANCHO_MAPA][ALTO_MAPA];
+} tMapaAtaque;
+
 #endif
