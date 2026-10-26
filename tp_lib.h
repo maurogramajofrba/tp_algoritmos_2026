@@ -12,7 +12,7 @@ void CrearNuevoAtaque();
 void CorregirRegistroDeMemoria();
 void GuardarAtaque();
 void CorregirRegistroDeArchivo();
-void VisualizarAtaqueHTML();
+void VisualizarAtaqueHTML(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque, std::string rutaArchivoEnMemoria);
 
 //Agregar aquí interfaces
 

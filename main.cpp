@@ -79,7 +79,7 @@ void menu() {
       EnterParaContinuar();
       break;
     case 7:
-      VisualizarAtaqueHTML();
+      VisualizarAtaqueHTML(pMapa, checksAtaque, rutaArchivoEnMemoria);
       EnterParaContinuar();
       break;
     case 0:
