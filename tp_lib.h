@@ -9,7 +9,7 @@ void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa);
 void MostrarAtaque(tMapaAtaque *pMapa);
 void CrearNuevoAtaque();
 void CorregirRegistroDeMemoria(tMapaAtaque *pMapa);
-void GuardarAtaque();
+void GuardarAtaque(tMapaAtaque *pMapa);
 void CorregirRegistroDeArchivo();
 
 //Agregar aquí interfaces

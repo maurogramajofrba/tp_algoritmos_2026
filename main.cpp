@@ -58,7 +58,7 @@ void menu() {
         EnterParaContinuar();
         break;
       case 6:
-        GuardarAtaque();
+        GuardarAtaque(pMapa);
         EnterParaContinuar();
         break;
       case 7:
