@@ -1,137 +1,109 @@
 #include "tp_lib.h"
+#include <filesystem>
 #include <iostream>
 
 using namespace std;
 
-string DibujarTabla(tMapaAtaque *pMapa, ChecksAtaque *checksAtaque);
-// DOCUMENTACION DE TOOLTIPS
-// https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/tooltip_role
-string DibujarEmoji(string idTooltip, string emoji);
-string DibujarTooltip(string id, string texto);
+void ImprimirFilaHTML(FILE *htmlFile, tOrden orden, int x, int y);
 
 void VisualizarAtaqueHTML(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque,
                           std::string rutaArchivoEnMemoria) {
-  string html;
-
-  html += R"(
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Hola Mundo</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="estilos.css">
-  </head>
-  <body class="bodyStyle">
-    <div class="encabezadoStyle">
-      <h1>Visualización del ataque</h1>
-      <div class="infoBlockStyle">
-        <div class="descriptionBlockStyle">
-          <p>Grafico del ataque</p>
-        </div>
-        <div class="summaryBlockStyle">
-        </div>
-      </div>
-    </div>
-    )" + DibujarTabla(pMapa, checksAtaque);
-  html += R"(
-    <script>
-      // Mover el tooltip compartido junto al emoji que lo necesita.
-      function mostrarTooltip(evento) {
-        const emoji = evento.target.closest('.info > span');
-        if (!emoji) return;
-        const tooltip = document.getElementById(emoji.getAttribute('aria-describedby'));
-        if (!tooltip) return;
-        tooltip.style.removeProperty('visibility');
-        emoji.parentElement.appendChild(tooltip);
-      }
-      document.addEventListener('mouseover', mostrarTooltip);
-      document.addEventListener('keydown', function(evento) {
-        if (evento.key === 'Escape') {
-          document.querySelectorAll('[role="tooltip"]').forEach(function(tooltip) {
-            tooltip.style.visibility = 'hidden';
-          });
-        }
-      });
-    </script>
-  </body>
-</html>
-  )";
-
-  FILE *archivoHTML;
-  archivoHTML = fopen("test.html", "w");
-
-  if (archivoHTML == NULL) {
-    cout << "Error al crear archivo html!!" << endl << endl;
+  if (pMapa == nullptr) {
+    cout << "No hay ataque cargado en memoria!!!" << endl;
     return;
   }
 
-  fprintf(archivoHTML, html.c_str());
+  filesystem::path ruta(rutaArchivoEnMemoria);
+  ruta.replace_extension(".html");
 
-  fclose(archivoHTML);
-}
+  FILE *reporteHTML = fopen(ruta.string().c_str(), "w");
 
-string DibujarTabla(tMapaAtaque *pMapa, ChecksAtaque *checksAtaque) {
-  string tooltips = DibujarTooltip("despegue", "El dron despega");
-  tooltips += DibujarTooltip("aterrizaje", "El dron aterriza");
-  tooltips += DibujarTooltip("granada1", "El dron lanza granada 1");
-  tooltips += DibujarTooltip("granada2", "El dron lanza granada 2");
-  tooltips += DibujarTooltip("kamikaze", "El dron hace un ataque kamikaze");
-
-  string tabla = "<table class=\"tablaStyle\">\n";
-
-  tabla += "<thead><tr><th>Y / X</th>";
-
-  for (int j = 0; j < 20; j++) {
-    tabla += "<th scope='col'>" + to_string(j) + "</th>";
+  if (!reporteHTML) {
+    cout << "No se pudo crear reporte html!!!" << endl;
   }
 
-  tabla += "</tr></thead><tbody>";
+  fprintf(reporteHTML, "<!DOCTYPE html>\n");
+  fprintf(reporteHTML, "<html>\n");
+  fprintf(reporteHTML, "<head>\n");
+  fprintf(reporteHTML, "<title>\n");
+  fprintf(reporteHTML, "Reporte archivo %s\n", ruta.filename().string().c_str());
+  fprintf(reporteHTML, "</title>\n");
+  fprintf(reporteHTML, "</head>\n");
+  fprintf(reporteHTML, "<body>\n");
+  fprintf(reporteHTML, "<h1>\n");
+  fprintf(reporteHTML, "Reporte archivo %s\n", ruta.filename().string().c_str());
+  fprintf(reporteHTML, "</h1>\n");
+  fprintf(reporteHTML, "<table>\n");
+  fprintf(reporteHTML,
+          "<thead><tr><th></th><th>Coordenada</th><th>Despega</th><th>Aterriza</th><th>Suelta "
+          "granada 1</th><th>Suelta granada 2</th><th>Ataque kamikaze</th><th>Espera</th><th>Se "
+          "mueve a</th></tr></thead>\n");
+  fprintf(reporteHTML, "<tbody>\n");
 
-  for (int i = 0; i < 20; i++) {
-    tabla += "<tr class=\"filaStyle\">\n";
-    tabla += "<th scope='row'>" + to_string(i) + "</th>";
-    for (int j = 0; j < 20; j++) {
-      tabla += "<td class=\"columnaStyle\">\n";
-      if (checksAtaque->coordenadasUsadas[i][j]) {
-        tabla += "<div class=\"celdaStyle\">\n";
-        if (pMapa->ordenes[i][j].despegue)
-          tabla += DibujarEmoji("despegue", "🛫");
-        if (pMapa->ordenes[i][j].aterrizaje)
-          tabla += DibujarEmoji("aterrizaje", "🛬");
-        if (pMapa->ordenes[i][j].soltarGranada1)
-          tabla += DibujarEmoji("granada1", "💣");
-        if (pMapa->ordenes[i][j].soltarGranada2)
-          tabla += DibujarEmoji("granada2", "💣");
-        if (pMapa->ordenes[i][j].ataqueKamikaze)
-          tabla += DibujarEmoji("kamikaze", "💥");
-        if (pMapa->ordenes[i][j].espera) {
-          string idEspera = "espera-" + to_string(i) + "-" + to_string(j);
-          tabla += DibujarEmoji(idEspera, "⌛");
-          tooltips +=
-              DibujarTooltip(idEspera, "El dron espera aqui " +
-                                           to_string(pMapa->ordenes[i][j].espera) + " segundos");
-        }
-        if (pMapa->ordenes[i][j].siguienteX && pMapa->ordenes[i][j].siguienteY) {
-          string idMovimiento = "movimiento-" + to_string(i) + "-" + to_string(j);
-          tabla += DibujarEmoji(idMovimiento, "✈️");
-          tooltips += DibujarTooltip(idMovimiento, "El dron se mueve a x: " + to_string(pMapa->ordenes[i][j].siguienteX) +
-                                                       " y:" + to_string(pMapa->ordenes[i][j].siguienteY));
-        }
-        tabla += "</div>\n";
-      }
-      tabla += "</td>\n";
-    }
-    tabla += "</tr>\n";
+  int i = checksAtaque->coordenadaDespegueX;
+  int j = checksAtaque->coordenadaDespegueY;
+  int contador = 1;
+
+  while (!pMapa->ordenes[i][j].aterrizaje && !pMapa->ordenes[i][j].ataqueKamikaze) {
+    fprintf(reporteHTML, "<tr><th>%d</th>", contador);
+    ImprimirFilaHTML(reporteHTML, pMapa->ordenes[i][j], i, j);
+
+    contador++;
+    int aux = i;
+    i = pMapa->ordenes[i][j].siguienteX;
+    j = pMapa->ordenes[aux][j].siguienteY;
   }
-  tabla += "</tbody></table>";
-  return tabla + "<div hidden>" + tooltips + "</div>";
+  fprintf(reporteHTML, "<tr><th>%d</th>", contador);
+  ImprimirFilaHTML(reporteHTML, pMapa->ordenes[i][j], i, j);
+
+  fprintf(reporteHTML, "</tbody>\n");
+  fprintf(reporteHTML, "</table>\n");
+
+  fprintf(reporteHTML, "</body>\n");
+  fprintf(reporteHTML, "</html>\n");
+
+  fclose(reporteHTML);
+  return;
 }
 
-string DibujarEmoji(string idTooltip, string emoji) {
-  return "<div class='info'><span aria-describedby='" + idTooltip + "'>" + emoji +
-         "</span></div>\n";
-}
+void ImprimirFilaHTML(FILE *htmlFile, tOrden orden, int x, int y) {
+  fprintf(htmlFile, "<td>%d %d</td>", x, y);
 
-string DibujarTooltip(string id, string texto) {
-  return "<div role='tooltip' id='" + id + "'><p>" + texto + "</p></div>\n";
+  if (orden.despegue)
+    fprintf(htmlFile, "<td>SI</td>");
+  else
+    fprintf(htmlFile, "<td>NO</td>");
+
+  if (orden.aterrizaje)
+    fprintf(htmlFile, "<td>SI</td>");
+  else
+    fprintf(htmlFile, "<td>NO</td>");
+
+  if (orden.soltarGranada1)
+    fprintf(htmlFile, "<td>SI</td>");
+  else
+    fprintf(htmlFile, "<td>NO</td>");
+
+  if (orden.soltarGranada2)
+    fprintf(htmlFile, "<td>SI</td>");
+  else
+    fprintf(htmlFile, "<td>NO</td>");
+
+  if (orden.ataqueKamikaze)
+    fprintf(htmlFile, "<td>SI</td>");
+  else
+    fprintf(htmlFile, "<td>NO</td>");
+
+  if (orden.espera) {
+    fprintf(htmlFile, "<td>%d s.</td>", orden.espera);
+  } else {
+    fprintf(htmlFile, "<td>-</td>");
+  }
+
+  if (!orden.ataqueKamikaze && !orden.aterrizaje)
+    fprintf(htmlFile, "<td>%d %d</td>", orden.siguienteX, orden.siguienteY);
+  else
+    fprintf(htmlFile, "<td>-</td>");
+
+  fprintf(htmlFile, "</tr>\n");
 }
