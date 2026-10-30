@@ -3,9 +3,7 @@
 
 using namespace std;
 
-extern tMapaAtaque *pMapa;
-
-void CorregirRegistroDeMemoria() {
+void CorregirRegistroDeMemoria(tMapaAtaque *pMapa) {
   if (pMapa == nullptr) {
     cout << "No hay ataque cargado en memoria!!!" << endl;
     return;

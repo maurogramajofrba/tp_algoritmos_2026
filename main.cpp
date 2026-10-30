@@ -54,7 +54,7 @@ void menu() {
         EnterParaContinuar();
         break;
       case 5:
-        CorregirRegistroDeMemoria();
+        CorregirRegistroDeMemoria(pMapa);
         EnterParaContinuar();
         break;
       case 6:

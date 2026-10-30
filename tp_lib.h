@@ -8,7 +8,7 @@
 void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa);
 void MostrarAtaque(tMapaAtaque *pMapa);
 void CrearNuevoAtaque();
-void CorregirRegistroDeMemoria();
+void CorregirRegistroDeMemoria(tMapaAtaque *pMapa);
 void GuardarAtaque();
 void CorregirRegistroDeArchivo();
 
