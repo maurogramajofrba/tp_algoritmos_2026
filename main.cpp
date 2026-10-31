@@ -8,6 +8,7 @@ void VisualizarAtaqueHTML();
 void FinalizarPrograma();
 
 tMapaAtaque* pMapa = nullptr;
+string rutaCompleta = "";
 
 int main() {
   menu();
@@ -38,7 +39,7 @@ void menu() {
     switch (opcion)
     {
       case 1:
-        CargarAtaqueEnMemoria(pMapa);
+        CargarAtaqueEnMemoria(pMapa, rutaCompleta);
         EnterParaContinuar();
         break;
       case 2:
@@ -62,7 +63,7 @@ void menu() {
         EnterParaContinuar();
         break;
       case 7:
-        VisualizarAtaqueHTML();
+        VisualizarAtaqueHTML(pMapa, rutaCompleta);
         EnterParaContinuar();
         break;
       case 0:
@@ -76,10 +77,6 @@ void menu() {
         break;
     }
   } while (opcion);
-}
-
-void VisualizarAtaqueHTML() {
-  cout << "Soy la acción VisualizarAtaqueHTML." << endl;
 }
 
 void FinalizarPrograma() {
