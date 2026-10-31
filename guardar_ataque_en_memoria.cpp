@@ -35,10 +35,8 @@ void GuardarAtaque(tMapaAtaque *pMapa){
 
   // Comprobar si se creó el archivo
   if (Nuevo_Archivo == NULL) {
-    perror("Error al crear el archivo");
-  } else {
-    cout << "Archivo creado exitosamente en: " << rutaCompleta << endl;
-    fclose(Nuevo_Archivo);
+    cout << "No se pudo crear el archivo!!!" << endl;
+    return;
   }
 
   int xActual = -1;
