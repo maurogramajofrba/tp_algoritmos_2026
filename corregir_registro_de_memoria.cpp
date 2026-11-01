@@ -3,6 +3,8 @@
 
 using namespace std;
 
+
+
 void CorregirRegistroDeMemoria(tMapaAtaque *pMapa) {
   if (pMapa == nullptr) {
     cout << "No hay ataque cargado en memoria!!!" << endl;
@@ -76,6 +78,13 @@ void CorregirRegistroDeMemoria(tMapaAtaque *pMapa) {
   cout << "Ingrese los nuevos datos (1 = Si, 0 = No):" << endl;
   cout << "Despegue (actual: " << celda.despegue << ") (1/0): ";
   cin >> nuevaOrden.despegue;
+
+  while(nuevaOrden.despegue!=0 && nuevaOrden.despegue !=1){
+    cout << "Valor invalido, por favor ingrese los nuevos datos (1 = Si, 0 = No)" << endl;
+    cout << "Despegue (actual: " << celda.despegue << ") (1/0): ";
+    cin >> nuevaOrden.despegue;
+  }
+  
 
   if (!nuevaOrden.despegue) {
     cout << "Aterrizaje (actual: " << celda.aterrizaje << ") (1/0): ";
