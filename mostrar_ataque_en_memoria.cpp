@@ -32,44 +32,15 @@ void MostrarAtaque(tMapaAtaque *pMapa) {
   bool finRuta = false;
   while (!finRuta) {
     tOrden celda = pMapa->ordenes[xActual][yActual];
-    cout << "[X: " << xActual << ", Y: " << yActual << "] -> Acciones: ";
-    bool hizoAlgo = false;
-    if (celda.despegue) {
-      cout << "Despegue ";
-      hizoAlgo = true;
-    }
-    if (celda.aterrizaje) {
-      cout << "Aterrizaje ";
-      hizoAlgo = true;
-    }
-    if (celda.soltarGranada1) {
-      cout << "Soltar Granada 1 ";
-      hizoAlgo = true;
-    }
-    if (celda.soltarGranada2) {
-      cout << "Soltar Granada 2 ";
-      hizoAlgo = true;
-    }
-    if (celda.ataqueKamikaze) {
-      cout << "Ataque Kamikaze ";
-      hizoAlgo = true;
-    }
-    if (celda.espera > 0) {
-      cout << "Esperar " << celda.espera << "s ";
-      hizoAlgo = true;
-    }
+    ImprimirOrden(celda, xActual, yActual);
 
-    if (!hizoAlgo) {
-      cout << "Mover ";
-    }
     if (celda.aterrizaje || celda.ataqueKamikaze) {
-      cout << "| FIN DE LA RUTA" << endl;
       finRuta = true;
     } else {
-      cout << "| Siguiente: [" << celda.siguienteX << ", " << celda.siguienteY << "]" << endl;
       xActual = celda.siguienteX;
       yActual = celda.siguienteY;
     }
+
     registrosImpresos++;
     if (registrosImpresos % 15 == 0 && !finRuta) {
       EnterParaContinuar();

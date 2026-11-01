@@ -31,8 +31,6 @@ void CrearNuevoAtaque() {
     return;
   }
 
-  cout << "Archivo abierto correctamente." << endl;
-
   tChecksAtaque checksAtaque = {};
   checksAtaque.moverseX = -1;
   checksAtaque.moverseY = -1;
@@ -40,26 +38,35 @@ void CrearNuevoAtaque() {
   int opcion;
 
   do {
-    if (checksAtaque.hayDespegue)
-      cout << "El dron despega con exito." << endl;
-    if (checksAtaque.soltoGranada1)
-      cout << "El dron soltó la granada 1." << endl;
-    if (checksAtaque.soltoGranada2)
-      cout << "El dron soltó la granada 2." << endl;
-    if (checksAtaque.hayAterrizaje)
-      cout << "El dron aterrizo." << endl;
-    if (checksAtaque.hayAtaqueKamikaze)
-      cout << "El dron hizo ataque kamikaze." << endl;
+    if (checksAtaque.cantPosiciones > 0) {
+      cout << "Resumen ataque nuevo:" << endl;
+      if (checksAtaque.hayDespegue)
+        cout << "El dron ya hizo " << checksAtaque.cantPosiciones << " movimientos en el mapa."
+             << endl;
+      if (checksAtaque.hayDespegue)
+        cout << "El dron despega con exito." << endl;
+      if (checksAtaque.hayDespegue)
+        cout << "El dron despega con exito." << endl;
+      if (checksAtaque.soltoGranada1)
+        cout << "El dron soltó la granada 1." << endl;
+      if (checksAtaque.soltoGranada2)
+        cout << "El dron soltó la granada 2." << endl;
+      if (checksAtaque.hayAterrizaje)
+        cout << "El dron aterrizo." << endl;
+      if (checksAtaque.hayAtaqueKamikaze)
+        cout << "El dron hizo ataque kamikaze." << endl << endl;
+      if (!(checksAtaque.hayAterrizaje || checksAtaque.hayAtaqueKamikaze))
+        cout << "1. Agregar orden." << endl;
+      else
+        cout << "1. Ataque finalizado! volver al menú principal." << endl;
 
-    if (!(checksAtaque.hayAterrizaje || checksAtaque.hayAtaqueKamikaze))
-      cout << "1. Agregar orden." << endl;
-    else
-      cout << "1. Ataque finalizado! volver al menú principal." << endl;
+      cout << "0. Cancelar creación neuvo ataque." << endl;
 
-    cout << "0. Cancelar creación neuvo ataque." << endl;
-
-    cin >> opcion;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cin >> opcion;
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    } else {
+      opcion = 1;
+    }
 
     switch (opcion) {
     case 1:
@@ -89,7 +96,7 @@ void AgregarOrdenArchivo(FILE *ataque, tChecksAtaque *checksAtaque) {
   if (!checksAtaque->hayDespegue) {
     nuevaOrden.despegue = true;
     do {
-      cout << "Indique donde despegara el dron:" << endl;
+      cout << "Indique donde despegará el dron:" << endl;
       cout << "x y > ";
       cin >> nuevaOrden.x >> nuevaOrden.y;
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
