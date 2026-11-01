@@ -21,4 +21,7 @@ void ImprimirSeparador(
 
 void EnterParaContinuar();
 
+void ImprimirOrden(tOrden orden, int x, int y);
+void ImprimirOrden(tOrdenArchivo orden);
+
 #endif
