@@ -3,14 +3,10 @@
 
 using namespace std;
 
-void AgregarOrdenArchivo(FILE *ataque, tChecksAtaque *checksAtaque);
-void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tChecksAtaque *checksAtaque);
+void AgregarOrdenArchivo(FILE *ataque, tChecksAtaque *checksAtaque, tOrdenArchivo *ordenAnterior);
+void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tChecksAtaque *checksAtaque,
+               tOrdenArchivo *ordenAnterior);
 void FinalizarSinGuardar(FILE *ataque, string rutaCompleta);
-
-bool EsMovimientoValido(int x, int y, int prevX = -1, int prevY = -1);
-void InsertarPosicionOrdenada(int posicionesUsadas[], int *cantPosiciones, int nuevaPosicion);
-bool PosicionUsada(int posicionesUsadas[], int cantPosiciones, int nuevaPosicion);
-int CodificarCoordenada(int x, int y);
 
 void CrearNuevoAtaque() {
   string rutaCompleta;
@@ -31,17 +27,18 @@ void CrearNuevoAtaque() {
     return;
   }
 
+  cout << "Archivo abierto correctamente." << endl;
+
   tChecksAtaque checksAtaque = {};
-  checksAtaque.moverseX = -1;
-  checksAtaque.moverseY = -1;
+  tOrdenArchivo *ordenAnterior = nullptr;
 
   int opcion;
 
   do {
-    if (checksAtaque.cantPosiciones > 0) {
+    if (checksAtaque.cantCoordenadas > 0) {
       cout << "Resumen ataque nuevo:" << endl;
       if (checksAtaque.hayDespegue)
-        cout << "El dron ya hizo " << checksAtaque.cantPosiciones << " movimientos en el mapa."
+        cout << "El dron ya hizo " << checksAtaque.cantCoordenadas << " movimientos en el mapa."
              << endl;
       if (checksAtaque.hayDespegue)
         cout << "El dron despega con exito." << endl;
@@ -71,7 +68,7 @@ void CrearNuevoAtaque() {
     switch (opcion) {
     case 1:
       if (!(checksAtaque.hayAterrizaje || checksAtaque.hayAtaqueKamikaze)) {
-        AgregarOrdenArchivo(ataque, &checksAtaque);
+        AgregarOrdenArchivo(ataque, &checksAtaque, ordenAnterior);
         break;
       } else {
         fclose(ataque);
@@ -88,26 +85,28 @@ void CrearNuevoAtaque() {
   } while (opcion);
 }
 
-void AgregarOrdenArchivo(FILE *ataque, tChecksAtaque *checksAtaque) {
+void AgregarOrdenArchivo(FILE *ataque, tChecksAtaque *checksAtaque, tOrdenArchivo *ordenAnterior) {
   tOrdenArchivo nuevaOrden = {};
-  nuevaOrden.x = checksAtaque->moverseX;
-  nuevaOrden.y = checksAtaque->moverseY;
+  if (ordenAnterior != nullptr) {
+    nuevaOrden.x = ordenAnterior->siguienteX;
+    nuevaOrden.y = ordenAnterior->siguienteY;
+  }
 
   if (!checksAtaque->hayDespegue) {
     nuevaOrden.despegue = true;
     do {
-      cout << "Indique donde despegará el dron:" << endl;
+      cout << "Indique donde despegara el dron:" << endl;
       cout << "x y > ";
       cin >> nuevaOrden.x >> nuevaOrden.y;
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
     } while (!EsMovimientoValido(nuevaOrden.x, nuevaOrden.y));
-    checksAtaque->hayDespegue = true;
   }
 
-  menuOrden(ataque, &nuevaOrden, checksAtaque);
+  menuOrden(ataque, &nuevaOrden, checksAtaque, ordenAnterior);
 }
 
-void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tChecksAtaque *checksAtaque) {
+void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tChecksAtaque *checksAtaque,
+               tOrdenArchivo *ordenAnterior) {
   int opcion;
 
   do {
@@ -174,8 +173,7 @@ void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tChecksAtaque *checksAtaq
           cin.ignore(numeric_limits<streamsize>::max(), '\n');
         } while (!EsMovimientoValido(currOrden->siguienteX, currOrden->siguienteY, currOrden->x,
                                      currOrden->y) ||
-                 PosicionUsada(checksAtaque->posicionesUsadas, checksAtaque->cantPosiciones,
-                               CodificarCoordenada(currOrden->siguienteX, currOrden->siguienteY)));
+                 checksAtaque->coordenadasUsadas[currOrden->siguienteX][currOrden->siguienteY]);
       }
       break;
     case 3:
@@ -217,8 +215,11 @@ void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tChecksAtaque *checksAtaq
       cout << "Se cancela la orden al dron" << endl;
       opcionValida = true;
 
-      if (currOrden->despegue)
+      if (currOrden->despegue) {
         checksAtaque->hayDespegue = false;
+        checksAtaque->coordenadaDespegueX = -1;
+        checksAtaque->coordenadaDespegueY = -1;
+      }
       if (currOrden->soltarGranada1)
         checksAtaque->soltoGranada1 = false;
       if (currOrden->soltarGranada2)
@@ -234,10 +235,15 @@ void menuOrden(FILE *ataque, tOrdenArchivo *currOrden, tChecksAtaque *checksAtaq
           currOrden->ataqueKamikaze) {
         opcionValida = true;
         fwrite(currOrden, sizeof(tOrdenArchivo), 1, ataque);
-        InsertarPosicionOrdenada(checksAtaque->posicionesUsadas, &checksAtaque->cantPosiciones,
-                                 (CodificarCoordenada(currOrden->x, currOrden->y)));
-        checksAtaque->moverseX = currOrden->siguienteX;
-        checksAtaque->moverseY = currOrden->siguienteY;
+
+        if (currOrden->despegue) {
+          checksAtaque->hayDespegue = true;
+          checksAtaque->coordenadaDespegueX = currOrden->x;
+          checksAtaque->coordenadaDespegueY = currOrden->y;
+        }
+        checksAtaque->coordenadasUsadas[currOrden->x][currOrden->y] = true;
+        checksAtaque->cantCoordenadas += 1;
+        ordenAnterior = currOrden;
         cout << "Se guardó la orden con éxito!!" << endl;
       }
     default:
@@ -254,67 +260,3 @@ void FinalizarSinGuardar(FILE *ataque, string rutaCompleta) {
   fclose(ataque);
   remove(rutaCompleta.c_str());
 }
-
-bool EsMovimientoValido(int x, int y, int prevX, int prevY) {
-  bool movimientoValido = true;
-
-  if (x == prevX && y == prevY)
-    movimientoValido = false;
-  if (x >= ANCHO_MAPA || y >= ALTO_MAPA)
-    movimientoValido = false;
-
-  if (prevX < 0) {
-    if (x < 0 || x >= ANCHO_MAPA)
-      movimientoValido = false;
-  } else {
-    if (std::abs(x - prevX) > 1)
-      movimientoValido = false;
-  }
-
-  if (prevY < 0) {
-    if (y < 0 || y >= ALTO_MAPA)
-      movimientoValido = false;
-  } else {
-    if (std::abs(y - prevY) > 1)
-      movimientoValido = false;
-  }
-
-  return movimientoValido;
-}
-
-void InsertarPosicionOrdenada(int posicionesUsadas[], int *cantPosiciones, int nuevaPosicion) {
-  int aux = (*cantPosiciones) - 1;
-
-  while (aux >= 0 && posicionesUsadas[aux] > nuevaPosicion) {
-    posicionesUsadas[aux + 1] = posicionesUsadas[aux];
-    aux--;
-  }
-
-  posicionesUsadas[aux + 1] = nuevaPosicion;
-  (*cantPosiciones)++;
-}
-
-bool PosicionUsada(int posicionesUsadas[], int cantPosiciones, int nuevaPosicion) {
-  int indiceInferior = 0;
-  int indiceSuperior = cantPosiciones - 1;
-  int indiceCentro;
-  bool encontradaUbicacion = false;
-
-  while (indiceInferior <= indiceSuperior && !encontradaUbicacion) {
-    indiceCentro = (indiceSuperior + indiceInferior) / 2;
-
-    if (posicionesUsadas[indiceCentro] == nuevaPosicion) {
-      encontradaUbicacion = true;
-    } else {
-      if (nuevaPosicion < posicionesUsadas[indiceCentro]) {
-        indiceSuperior = indiceCentro - 1;
-      } else {
-        indiceInferior = indiceCentro + 1;
-      }
-    }
-  }
-
-  return encontradaUbicacion;
-}
-
-int CodificarCoordenada(int x, int y) { return x * ALTO_MAPA + y; }

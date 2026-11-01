@@ -3,9 +3,7 @@
 
 using namespace std;
 
-
-
-void CorregirRegistroDeMemoria(tMapaAtaque *pMapa) {
+void CorregirRegistroDeMemoria(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque) {
   if (pMapa == nullptr) {
     cout << "No hay ataque cargado en memoria!!!" << endl;
     return;
@@ -27,90 +25,23 @@ void CorregirRegistroDeMemoria(tMapaAtaque *pMapa) {
     return;
   }
 
-  tOrden celda = pMapa->ordenes[x][y];
-
-  if (!celda.despegue && !celda.aterrizaje && !celda.ataqueKamikaze &&
-      !celda.soltarGranada1 && !celda.soltarGranada2 && celda.espera == 0 &&
-      celda.siguienteX == 0 && celda.siguienteY == 0) {
+  if (!checksAtaque->coordenadasUsadas[x][y]) {
     cout << "No hay ningun registro cargado en esa coordenada." << endl;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return;
   }
 
+  tOrden celda = pMapa->ordenes[x][y];
+
   cout << endl << "Registro actual:" << endl;
-  cout << "[X: " << x << ", Y: " << y << "] -> Acciones: ";
-  bool hizoAlgo = false;
-  if (celda.despegue) {
-    cout << "Despegue ";
-    hizoAlgo = true;
-  }
-  if (celda.aterrizaje) {
-    cout << "Aterrizaje ";
-    hizoAlgo = true;
-  }
-  if (celda.soltarGranada1) {
-    cout << "Soltar Granada 1 ";
-    hizoAlgo = true;
-  }
-  if (celda.soltarGranada2) {
-    cout << "Soltar Granada 2 ";
-    hizoAlgo = true;
-  }
-  if (celda.ataqueKamikaze) {
-    cout << "Ataque Kamikaze ";
-    hizoAlgo = true;
-  }
-  if (celda.espera > 0) {
-    cout << "Esperar " << celda.espera << "s ";
-    hizoAlgo = true;
-  }
-  if (!hizoAlgo) {
-    cout << "Mover ";
-  }
-  if (celda.aterrizaje || celda.ataqueKamikaze) {
-    cout << "| FIN DE LA RUTA" << endl << endl;
-  } else {
-    cout << "| Siguiente: [" << celda.siguienteX << ", " << celda.siguienteY << "]" << endl << endl;
-  }
+  ImprimirOrden(celda, x, y);
 
   tOrden nuevaOrden = {};
 
   cout << "Ingrese los nuevos datos (1 = Si, 0 = No):" << endl;
-  cout << "Despegue (actual: " << celda.despegue << ") (1/0): ";
-  cin >> nuevaOrden.despegue;
+  IngresarOrdenMemoria(nuevaOrden);
 
-  while(nuevaOrden.despegue!=0 && nuevaOrden.despegue !=1){
-    cout << "Valor invalido, por favor ingrese los nuevos datos (1 = Si, 0 = No)" << endl;
-    cout << "Despegue (actual: " << celda.despegue << ") (1/0): ";
-    cin >> nuevaOrden.despegue;
-  }
-  
-
-  if (!nuevaOrden.despegue) {
-    cout << "Aterrizaje (actual: " << celda.aterrizaje << ") (1/0): ";
-    cin >> nuevaOrden.aterrizaje;
-
-    if (!nuevaOrden.aterrizaje) {
-      cout << "Ataque Kamikaze (actual: " << celda.ataqueKamikaze << ") (1/0): ";
-      cin >> nuevaOrden.ataqueKamikaze;
-    }
-
-    cout << "Soltar Granada 1 (actual: " << celda.soltarGranada1 << ") (1/0): ";
-    cin >> nuevaOrden.soltarGranada1;
-
-    cout << "Soltar Granada 2 (actual: " << celda.soltarGranada2 << ") (1/0): ";
-    cin >> nuevaOrden.soltarGranada2;
-  }
-
-  cout << "Tiempo de espera en segundos (actual: " << celda.espera << "): ";
-  cin >> nuevaOrden.espera;
-
-  if (!nuevaOrden.aterrizaje && !nuevaOrden.ataqueKamikaze) {
-    cout << "Siguiente X (actual: " << celda.siguienteX << "): ";
-    cin >> nuevaOrden.siguienteX;
-    cout << "Siguiente Y (actual: " << celda.siguienteY << "): ";
-    cin >> nuevaOrden.siguienteY;
-  } else {
+  if (nuevaOrden.aterrizaje && nuevaOrden.ataqueKamikaze) {
     int borrarX = celda.siguienteX;
     int borrarY = celda.siguienteY;
     while (borrarX != 0 || borrarY != 0) {

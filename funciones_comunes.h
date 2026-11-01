@@ -20,8 +20,10 @@ void ImprimirSeparador(
 );
 
 void EnterParaContinuar();
-
+bool EsMovimientoValido(int x, int y, int prevX = -1, int prevY = -1);
 void ImprimirOrden(tOrden orden, int x, int y);
 void ImprimirOrden(tOrdenArchivo orden);
+void IngresarOrdenMemoria(tOrden &orden);
+void IngresarOrden(tOrdenArchivo &orden);
 
 #endif

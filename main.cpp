@@ -4,10 +4,10 @@
 using namespace std;
 
 void menu();
-void VisualizarAtaqueHTML();
 void FinalizarPrograma();
 
 tMapaAtaque* pMapa = nullptr;
+tChecksAtaque *checksAtaque = nullptr;
 string rutaCompleta = "";
 
 int main() {
@@ -39,7 +39,7 @@ void menu() {
     switch (opcion)
     {
       case 1:
-        CargarAtaqueEnMemoria(pMapa, rutaCompleta);
+        CargarAtaqueEnMemoria(pMapa, checksAtaque, rutaCompleta);
         EnterParaContinuar();
         break;
       case 2:
@@ -55,7 +55,7 @@ void menu() {
         EnterParaContinuar();
         break;
       case 5:
-        CorregirRegistroDeMemoria(pMapa);
+        CorregirRegistroDeMemoria(pMapa, checksAtaque);
         EnterParaContinuar();
         break;
       case 6:
@@ -63,7 +63,7 @@ void menu() {
         EnterParaContinuar();
         break;
       case 7:
-        VisualizarAtaqueHTML(pMapa, rutaCompleta);
+        VisualizarAtaqueHTML(pMapa, checksAtaque, rutaCompleta);
         EnterParaContinuar();
         break;
       case 0:
@@ -80,5 +80,8 @@ void menu() {
 }
 
 void FinalizarPrograma() {
-  cout << "Soy la acción FinalizarPrograma." << endl;
+  if (pMapa != nullptr) {
+    delete pMapa;
+    delete checksAtaque;
+  }
 }

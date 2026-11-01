@@ -6,7 +6,7 @@ using namespace std;
 
 void ImprimirFilaHTML(FILE *htmlFile, tOrden orden, int x, int y);
 
-void VisualizarAtaqueHTML(tMapaAtaque *pMapa, std::string rutaArchivoEnMemoria) {
+void VisualizarAtaqueHTML(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque, std::string rutaArchivoEnMemoria) {
   if (pMapa == nullptr) {
     cout << "No hay ataque cargado en memoria!!!" << endl;
     return;
@@ -21,22 +21,8 @@ void VisualizarAtaqueHTML(tMapaAtaque *pMapa, std::string rutaArchivoEnMemoria) 
     cout << "No se pudo crear reporte html!!!" << endl;
   }
 
-  int xActual = -1;
-  int yActual = -1;
-  bool encontrado = false;
-  for (int x = 0; x < ANCHO_MAPA && !encontrado; x++) {
-    for (int y = 0; y < ALTO_MAPA && !encontrado; y++) {
-      if (pMapa->ordenes[x][y].despegue) {
-        xActual = x;
-        yActual = y;
-        encontrado = true;
-      }
-    }
-  }
-  if (!encontrado) {
-    cout << "No hay ningun ataque cargado en memoria." << endl;
-    return;
-  }
+  int xActual = checksAtaque->coordenadaDespegueX;
+  int yActual = checksAtaque->coordenadaDespegueY;
 
   fprintf(reporteHTML, "<!DOCTYPE html>\n");
   fprintf(reporteHTML, "<html>\n");
