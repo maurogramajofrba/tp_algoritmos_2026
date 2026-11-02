@@ -3,31 +3,14 @@
 
 using namespace std;
 
-void MostrarAtaque(tMapaAtaque *pMapa) {
-  if (pMapa == nullptr) {
+void MostrarAtaque(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque) {
+  if (pMapa == nullptr || checksAtaque == nullptr) {
     cout << "No hay ataque cargado en memoria!!!" << endl;
     return;
   }
 
-  ImprimirSeparador(15, '-', 1, 0);
-  cout << " MOSTRAR ATAQUE CARGADO ";
-  ImprimirSeparador(15, '-', 0, 2);
-  int xActual = -1;
-  int yActual = -1;
-  bool encontrado = false;
-  for (int x = 0; x < ANCHO_MAPA && !encontrado; x++) {
-    for (int y = 0; y < ALTO_MAPA && !encontrado; y++) {
-      if (pMapa->ordenes[x][y].despegue) {
-        xActual = x;
-        yActual = y;
-        encontrado = true;
-      }
-    }
-  }
-  if (!encontrado) {
-    cout << "No hay ningun ataque cargado en memoria." << endl;
-    return;
-  }
+  int xActual = checksAtaque->coordenadaDespegueX;
+  int yActual = checksAtaque->coordenadaDespegueY;
   int registrosImpresos = 0;
   bool finRuta = false;
   while (!finRuta) {

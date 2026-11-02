@@ -1,16 +1,20 @@
-#include <iostream>
 #include "tp_lib.h"
+#include <iostream>
 
 using namespace std;
 
 void menu();
 void FinalizarPrograma();
 
-tMapaAtaque* pMapa = nullptr;
+tMapaAtaque *pMapa = nullptr;
 tChecksAtaque *checksAtaque = nullptr;
 string rutaCompleta = "";
 
 int main() {
+#ifdef _WIN32
+  SetConsoleOutputCP(CP_UTF8);
+  SetConsoleCP(CP_UTF8);
+#endif
   menu();
   delete pMapa;
   return 0;
@@ -36,45 +40,44 @@ void menu() {
     cin >> opcion;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    switch (opcion)
-    {
-      case 1:
-        CargarAtaqueEnMemoria(pMapa, checksAtaque, rutaCompleta);
-        EnterParaContinuar();
-        break;
-      case 2:
-        MostrarAtaque(pMapa);
-        EnterParaContinuar();
-        break;
-      case 3:
-        CrearNuevoAtaque();
-        EnterParaContinuar();
-        break;
-      case 4:
-        CorregirRegistroDeArchivo();
-        EnterParaContinuar();
-        break;
-      case 5:
-        CorregirRegistroDeMemoria(pMapa, checksAtaque);
-        EnterParaContinuar();
-        break;
-      case 6:
-        GuardarAtaque(pMapa);
-        EnterParaContinuar();
-        break;
-      case 7:
-        VisualizarAtaqueHTML(pMapa, checksAtaque, rutaCompleta);
-        EnterParaContinuar();
-        break;
-      case 0:
-        FinalizarPrograma();
-        EnterParaContinuar();
-        break;
-      
-      default:
-        cout << "Opción inválida intente nuevamente!" << endl << endl;
-        EnterParaContinuar();
-        break;
+    switch (opcion) {
+    case 1:
+      CargarAtaqueEnMemoria(pMapa, checksAtaque, rutaCompleta);
+      EnterParaContinuar();
+      break;
+    case 2:
+      MostrarAtaque(pMapa, checksAtaque);
+      EnterParaContinuar();
+      break;
+    case 3:
+      CrearNuevoAtaque();
+      EnterParaContinuar();
+      break;
+    case 4:
+      CorregirRegistroDeArchivo();
+      EnterParaContinuar();
+      break;
+    case 5:
+      CorregirRegistroDeMemoria(pMapa, checksAtaque);
+      EnterParaContinuar();
+      break;
+    case 6:
+      GuardarAtaque(pMapa);
+      EnterParaContinuar();
+      break;
+    case 7:
+      VisualizarAtaqueHTML(pMapa, checksAtaque, rutaCompleta);
+      EnterParaContinuar();
+      break;
+    case 0:
+      FinalizarPrograma();
+      EnterParaContinuar();
+      break;
+
+    default:
+      cout << "Opción inválida intente nuevamente!" << endl << endl;
+      EnterParaContinuar();
+      break;
     }
   } while (opcion);
 }

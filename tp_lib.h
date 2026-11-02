@@ -6,8 +6,15 @@
 #include "funciones_comunes.h"
 #include <string>
 
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
+
 void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa, tChecksAtaque *&checksAtaque, std::string &rutaCompleta);
-void MostrarAtaque(tMapaAtaque *pMapa);
+void MostrarAtaque(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque);
 void CrearNuevoAtaque();
 void CorregirRegistroDeMemoria(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque);
 void GuardarAtaque(tMapaAtaque *pMapa);

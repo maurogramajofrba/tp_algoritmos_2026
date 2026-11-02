@@ -7,18 +7,14 @@ using namespace std;
  * Acá podemos poner todas las funciones en común del tp.
  * Ejemplos: BurbujaSort, ValidarDespegue
  */
-void ImprimirSeparador(int len, char caracter, int saltosSuperior, int saltosInferior)
-{
-  for (int i = 0; i < saltosSuperior; i++)
-  {
+void ImprimirSeparador(int len, char caracter, int saltosSuperior, int saltosInferior) {
+  for (int i = 0; i < saltosSuperior; i++) {
     cout << endl;
   }
-  for (int i = 0; i < len; i++)
-  {
+  for (int i = 0; i < len; i++) {
     cout << caracter;
   }
-  for (int i = 0; i < saltosInferior; i++)
-  {
+  for (int i = 0; i < saltosInferior; i++) {
     cout << endl;
   }
 }
@@ -34,21 +30,15 @@ bool EsMovimientoValido(int x, int y, int prevX, int prevY) {
 
   if (x == prevX && y == prevY)
     movimientoValido = false;
-  if (x >= ANCHO_MAPA || y >= ALTO_MAPA)
+  if ((x < 0 || x >= ANCHO_MAPA) || (y < 0 || y >= ALTO_MAPA))
     movimientoValido = false;
 
-  if (prevX < 0) {
-    if (x < 0 || x >= ANCHO_MAPA)
-      movimientoValido = false;
-  } else {
+  if (prevX >= 0) {
     if (std::abs(x - prevX) > 1)
       movimientoValido = false;
   }
 
-  if (prevY < 0) {
-    if (y < 0 || y >= ALTO_MAPA)
-      movimientoValido = false;
-  } else {
+  if (prevY >= 0) {
     if (std::abs(y - prevY) > 1)
       movimientoValido = false;
   }
