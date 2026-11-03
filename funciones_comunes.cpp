@@ -113,29 +113,60 @@ void ImprimirOrden(tOrdenArchivo orden) {
   cout << endl;
 }
 
-void IngresarOrdenMemoria(tOrden &orden) {
-  cout << "Tiempo de espera: ";
-  cin >> orden.espera;
+void IngresarOrdenMemoria(tOrden &orden){
+  cout << "Espera?: ";
+  do {
+    cin >> orden.espera;
+    if (!(orden.espera>=0)) {
+      cout << "Ingrese valor valido!!!" << endl;
+      cout << "Espera?: ";
+    }
+  } while (!(orden.espera>=0));
 
   cout << "Despega? (0 = NO, 1 = SI): ";
-  cin >> orden.despegue;
+  do {
+    cin >> orden.despegue;
+    if (!(orden.despegue == 0 || orden.despegue == 1)) {
+      cout << "Ingrese valor valido!!!" << endl;
+      cout << "Despega? (0 = NO, 1 = SI): ";
+    }
+  } while (!(orden.despegue == 0 || orden.despegue == 1));
 
   cout << "Aterriza? (0 = NO, 1 = SI): ";
-  cin >> orden.aterrizaje;
+  do {
+    cin >> orden.aterrizaje;
+    if (!(orden.aterrizaje == 0 || orden.aterrizaje == 1)) {
+      cout << "Ingrese valor valido!!!" << endl;
+      cout << "Aterriza? (0 = NO, 1 = SI): ";
+    }
+  } while (!(orden.aterrizaje == 0 || orden.aterrizaje == 1));
 
-  cout << "Suelta granada 1? (0 = NO, 1 = SI): ";
-  cin >> orden.soltarGranada1;
+  cout << "Soltar granada 1? (0 = NO, 1 = SI): ";
+  do {
+    cin >> orden.soltarGranada1;
+    if (!(orden.soltarGranada1 == 0 || orden.soltarGranada1 == 1)) {
+      cout << "Ingrese valor valido!!!" << endl;
+      cout << "Soltar granada 1? (0 = NO, 1 = SI): ";
+    }
+  } while (!(orden.soltarGranada1 == 0 || orden.soltarGranada1 == 1));
 
-  cout << "Suelta granada 2? (0 = NO, 1 = SI): ";
-  cin >> orden.soltarGranada2;
+  cout << "Soltar granada 2? (0 = NO, 1 = SI): ";
+  do {
+    cin >> orden.soltarGranada2;
+    if (!(orden.soltarGranada2 == 0 || orden.soltarGranada2 == 1)) {
+      cout << "Ingrese valor valido!!!" << endl;
+      cout << "Soltar granada 2? (0 = NO, 1 = SI): ";
+    }
+  } while (!(orden.soltarGranada2 == 0 || orden.soltarGranada2 == 1));
 
-  cout << "Ataque kamikaze? (0 = NO, 1 = SI): ";
-  cin >> orden.ataqueKamikaze;
-
-  if (!orden.aterrizaje && !orden.ataqueKamikaze) {
-    cout << "Siguiente coordenada X Y: ";
-    cin >> orden.siguienteX >> orden.siguienteY;
-  }
+  cout << "Ataque Kamikaze? (0 = NO, 1 = SI): ";
+  do {
+    cin >> orden.ataqueKamikaze;
+    if (!(orden.ataqueKamikaze == 0 || orden.ataqueKamikaze == 1)) {
+      cout << "Ingrese valor valido!!!" << endl;
+      cout << "Ataque Kamikaze? (0 = NO, 1 = SI): ";
+    }
+  } while (!(orden.ataqueKamikaze == 0 || orden.ataqueKamikaze == 1));
 }
 
 void IngresarOrden(tOrdenArchivo &orden) {
