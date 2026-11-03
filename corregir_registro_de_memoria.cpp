@@ -50,6 +50,9 @@ void CorregirRegistroDeMemoria(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque) 
     while (!terminarBorrado) {
       tOrden aux = pMapa->ordenes[borrarX][borrarY];
       
+      if (borrarX == x && borrarY == y) {
+        break;
+      }
       // Limpiamos la celda en el mapa
       pMapa->ordenes[borrarX][borrarY] = {};
       
