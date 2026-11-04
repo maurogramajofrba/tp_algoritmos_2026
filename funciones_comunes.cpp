@@ -126,6 +126,21 @@ void IngresarOrdenMemoria(tOrden &orden) {
     cout << "Siguiente coordenada X Y: ";
     cin >> orden.siguienteX >> orden.siguienteY;
   }
+  // Despegue y ataque X
+  if (orden.despegue && (orden.soltarGranada1 || orden.soltarGranada2)){
+    cout << "No se puede despegar y atacar al mismo tiempo, por favor ingrese datos validos" << endl;
+    IngresarOrdenMemoria(orden);
+  }
+  // Aterrizaje y ataque kamikaze X
+  if (orden.ataqueKamikaze && orden.aterrizaje){
+    cout << "No se puede aterrizar y realizar un ataque kamikaze al mismo tiempo, por favor ingrese datos validos" << endl;
+    IngresarOrdenMemoria(orden);
+  }
+  // Despegue y final del trayecto
+  if (orden.despegue && (orden.ataqueKamikaze || orden.aterrizaje)){
+    cout << "No se puede despegar y terminar el recorrido al mismo tiempo, por favor ingrese datos validos" << endl;
+    IngresarOrdenMemoria(orden);
+  }
 }
 
 void IngresarOrden(tOrdenArchivo &orden) {
