@@ -47,6 +47,7 @@ void CorregirRegistroDeMemoria(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque) 
     int borrarY = checksAtaque->coordenadaDespegueY;
     
     bool terminarBorrado = false;
+    
     while (!terminarBorrado) {
       tOrden aux = pMapa->ordenes[borrarX][borrarY];
       
