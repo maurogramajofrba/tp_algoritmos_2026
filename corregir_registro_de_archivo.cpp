@@ -30,9 +30,13 @@ void CorregirRegistroDeArchivo() {
 
   tOrdenArchivo registro;
   bool encontrado = false;
-  while (!encontrado && fread(&registro, sizeof(tOrdenArchivo), 1, ataque) == 1) {
+  long offsetRegistro = -1; // <--- 1. Variable para guardar la posición exacta del byte
+
+  while (fread(&registro, sizeof(tOrdenArchivo), 1, ataque) == 1) {
     if (registro.x == x && registro.y == y) {
       encontrado = true;
+      offsetRegistro = ftell(ataque) - sizeof(tOrdenArchivo); // <--- 2. Capturamos el inicio exacto del registro
+      break;
     }
   }
 
@@ -44,77 +48,71 @@ void CorregirRegistroDeArchivo() {
   }
 
   cout << endl << "Registro actual:" << endl;
-  cout << "[X: " << registro.x << ", Y: " << registro.y << "] -> Acciones: ";
-  bool hizoAlgo = false;
-  if (registro.despegue) {
-    cout << "Despegue ";
-    hizoAlgo = true;
-  }
-  if (registro.aterrizaje) {
-    cout << "Aterrizaje ";
-    hizoAlgo = true;
-  }
-  if (registro.soltarGranada1) {
-    cout << "Soltar Granada 1 ";
-    hizoAlgo = true;
-  }
-  if (registro.soltarGranada2) {
-    cout << "Soltar Granada 2 ";
-    hizoAlgo = true;
-  }
-  if (registro.ataqueKamikaze) {
-    cout << "Ataque Kamikaze ";
-    hizoAlgo = true;
-  }
-  if (registro.espera > 0) {
-    cout << "Esperar " << registro.espera << "s ";
-    hizoAlgo = true;
-  }
-  if (!hizoAlgo) {
-    cout << "Mover ";
-  }
-  if (registro.aterrizaje || registro.ataqueKamikaze) {
-    cout << "| FIN DE LA RUTA" << endl << endl;
-  } else {
-    cout << "| Siguiente: [" << registro.siguienteX << ", " << registro.siguienteY << "]" << endl
-         << endl;
-  }
+  ImprimirOrden(registro);
 
   tOrdenArchivo nuevaOrden = {};
   nuevaOrden.x = registro.x;
   nuevaOrden.y = registro.y;
 
-  cout << "Ingrese los nuevos datos (1 = Si, 0 = No):" << endl;
-  cout << "Despegue (actual: " << registro.despegue << ") (1/0): ";
-  cin >> nuevaOrden.despegue;
+  IngresarOrden(nuevaOrden);
 
-  if (!nuevaOrden.despegue) {
-    cout << "Aterrizaje (actual: " << registro.aterrizaje << ") (1/0): ";
-    cin >> nuevaOrden.aterrizaje;
+  // Lógica para limpiar registros anteriores si cambia el despegue
+  if (nuevaOrden.despegue) {
+    rewind(ataque);
+    tOrdenArchivo regActual;
+    long posActual;
 
-    if (!nuevaOrden.aterrizaje) {
-      cout << "Ataque Kamikaze (actual: " << registro.ataqueKamikaze << ") (1/0): ";
-      cin >> nuevaOrden.ataqueKamikaze;
+    while (fread(&regActual, sizeof(tOrdenArchivo), 1, ataque) == 1) {
+      if (regActual.x == x && regActual.y == y) {
+        break;
+      }
+
+      if (regActual.despegue) {
+        regActual.despegue = false;
+      }
+
+      posActual = ftell(ataque);
+      fseek(ataque, posActual - (long)sizeof(tOrdenArchivo), SEEK_SET);
+      
+      tOrdenArchivo registroVacio = {};
+      fwrite(&registroVacio, sizeof(tOrdenArchivo), 1, ataque);
+      
+      fseek(ataque, posActual, SEEK_SET);
     }
-
-    cout << "Soltar Granada 1 (actual: " << registro.soltarGranada1 << ") (1/0): ";
-    cin >> nuevaOrden.soltarGranada1;
-
-    cout << "Soltar Granada 2 (actual: " << registro.soltarGranada2 << ") (1/0): ";
-    cin >> nuevaOrden.soltarGranada2;
   }
 
-  cout << "Tiempo de espera en segundos (actual: " << registro.espera << "): ";
-  cin >> nuevaOrden.espera;
+  // Lógica para limpiar registros posteriores si cambia el aterrizaje / kamikaze
+  if (nuevaOrden.aterrizaje || nuevaOrden.ataqueKamikaze){
+    rewind(ataque);
+    tOrdenArchivo regActual;
+    long posActual;
+    bool empezarAEliminar = false;
+    
+    while (fread(&regActual, sizeof(tOrdenArchivo), 1, ataque) == 1) {
+      if (regActual.x == x && regActual.y == y) {
+        empezarAEliminar = true;
+        continue;
+      }
+      if (empezarAEliminar) {
+        bool eraFinViejo = regActual.aterrizaje || regActual.ataqueKamikaze;
 
-  if (!nuevaOrden.aterrizaje && !nuevaOrden.ataqueKamikaze) {
-    cout << "Siguiente X (actual: " << registro.siguienteX << "): ";
-    cin >> nuevaOrden.siguienteX;
-    cout << "Siguiente Y (actual: " << registro.siguienteY << "): ";
-    cin >> nuevaOrden.siguienteY;
+        posActual = ftell(ataque);
+        fseek(ataque, posActual - (long)sizeof(tOrdenArchivo), SEEK_SET);
+        
+        tOrdenArchivo registroVacio = {};
+        fwrite(&registroVacio, sizeof(tOrdenArchivo), 1, ataque);
+        
+        fseek(ataque, posActual, SEEK_SET);
+
+        if (eraFinViejo) {
+          break;
+        }
+      }
+   }
   }
 
-  fseek(ataque, -(long)sizeof(tOrdenArchivo), SEEK_CUR);
+
+  fseek(ataque, offsetRegistro, SEEK_SET);
   fwrite(&nuevaOrden, sizeof(tOrdenArchivo), 1, ataque);
   fclose(ataque);
 

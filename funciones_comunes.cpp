@@ -123,14 +123,29 @@ void IngresarOrdenMemoria(tOrden &orden) {
   cin >> orden.ataqueKamikaze;
 
   if (!orden.aterrizaje && !orden.ataqueKamikaze) {
-    cout << "Siguiente coordenada X Y: ";
-    cin >> orden.siguienteX >> orden.siguienteY;
+    cout << "Siguiente coordenada X: ";
+    cin >> orden.siguienteX;
+    cout << "Siguiente coordenada Y: ";
+    cin >> orden.siguienteY;
+  }
+  // Despegue y ataque X
+  if (orden.despegue && (orden.soltarGranada1 || orden.soltarGranada2)){
+    cout << "No se puede despegar y atacar al mismo tiempo, por favor ingrese datos validos" << endl;
+    IngresarOrdenMemoria(orden);
+  }
+  // Aterrizaje y ataque kamikaze X
+  if (orden.ataqueKamikaze && orden.aterrizaje){
+    cout << "No se puede aterrizar y realizar un ataque kamikaze al mismo tiempo, por favor ingrese datos validos" << endl;
+    IngresarOrdenMemoria(orden);
+  }
+  // Despegue y final del trayecto
+  if (orden.despegue && (orden.ataqueKamikaze || orden.aterrizaje)){
+    cout << "No se puede despegar y terminar el recorrido al mismo tiempo, por favor ingrese datos validos" << endl;
+    IngresarOrdenMemoria(orden);
   }
 }
 
 void IngresarOrden(tOrdenArchivo &orden) {
-  cout << "Coordenadas X Y: ";
-  cin >> orden.x >> orden.y;
 
   cout << "Tiempo de espera: ";
   cin >> orden.espera;
@@ -151,7 +166,24 @@ void IngresarOrden(tOrdenArchivo &orden) {
   cin >> orden.ataqueKamikaze;
 
   if (!orden.aterrizaje && !orden.ataqueKamikaze) {
-    cout << "Siguiente coordenada X Y: ";
-    cin >> orden.siguienteX >> orden.siguienteY;
+    cout << "Siguiente coordenada X: ";
+    cin >> orden.siguienteX;
+    cout << "Siguiente coordenada Y: ";
+    cin >> orden.siguienteY;
+  }
+  // Despegue y ataque -X-
+  if (orden.despegue && (orden.soltarGranada1 || orden.soltarGranada2)){
+    cout << "No se puede despegar y atacar al mismo tiempo, por favor ingrese datos validos" << endl;
+    IngresarOrden(orden);
+  }
+  // Aterrizaje y ataque kamikaze -X-
+  if (orden.ataqueKamikaze && orden.aterrizaje){
+    cout << "No se puede aterrizar y realizar un ataque kamikaze al mismo tiempo, por favor ingrese datos validos" << endl;
+    IngresarOrden(orden);
+  }
+  // Despegue y final del trayecto -X-
+  if (orden.despegue && (orden.ataqueKamikaze || orden.aterrizaje)){
+    cout << "No se puede despegar y terminar el recorrido al mismo tiempo, por favor ingrese datos validos" << endl;
+    IngresarOrden(orden);
   }
 }

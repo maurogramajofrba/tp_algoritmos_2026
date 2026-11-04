@@ -55,7 +55,7 @@ void GuardarAtaque(tMapaAtaque *pMapa){
     cout << "No hay ningun ataque cargado en memoria." << endl;
     return;
   }
-
+  
   bool finRuta = false;
   while (!finRuta) {
     tOrden celda = pMapa->ordenes[xActual][yActual];

@@ -38,6 +38,15 @@ void CargarAtaqueEnMemoria(tMapaAtaque *&pMapa, tChecksAtaque *&checksAtaque,
 
   // Chequear las validaciones fundamentales
   while (fread(&ataque_leido, sizeof(OrdenArchivo), 1, ataque)) {
+
+    if (ataque_leido.x == 0 && ataque_leido.y == 0 && 
+        !ataque_leido.despegue && !ataque_leido.aterrizaje && 
+        !ataque_leido.ataqueKamikaze && !ataque_leido.soltarGranada1 && 
+        !ataque_leido.soltarGranada2 && 
+        ataque_leido.siguienteX == 0 && ataque_leido.siguienteY == 0) {
+        continue; // Salta este registro y pasa al siguiente del archivo
+    }
+
     // Medida por si los valores son incorrectos
     if (ataque_leido.x < 0 || ataque_leido.x >= ANCHO_MAPA || ataque_leido.y < 0 ||
         ataque_leido.y >= ALTO_MAPA) {
