@@ -30,9 +30,13 @@ void CorregirRegistroDeArchivo() {
 
   tOrdenArchivo registro;
   bool encontrado = false;
-  while (!encontrado && fread(&registro, sizeof(tOrdenArchivo), 1, ataque) == 1) {
+  long offsetRegistro = -1; // <--- 1. Variable para guardar la posición exacta del byte
+
+  while (fread(&registro, sizeof(tOrdenArchivo), 1, ataque) == 1) {
     if (registro.x == x && registro.y == y) {
       encontrado = true;
+      offsetRegistro = ftell(ataque) - sizeof(tOrdenArchivo); // <--- 2. Capturamos el inicio exacto del registro
+      break;
     }
   }
 
@@ -52,7 +56,63 @@ void CorregirRegistroDeArchivo() {
 
   IngresarOrden(nuevaOrden);
 
-  fseek(ataque, -(long)sizeof(tOrdenArchivo), SEEK_CUR);
+  // Lógica para limpiar registros anteriores si cambia el despegue
+  if (nuevaOrden.despegue) {
+    rewind(ataque);
+    tOrdenArchivo regActual;
+    long posActual;
+
+    while (fread(&regActual, sizeof(tOrdenArchivo), 1, ataque) == 1) {
+      if (regActual.x == x && regActual.y == y) {
+        break;
+      }
+
+      if (regActual.despegue) {
+        regActual.despegue = false;
+      }
+
+      posActual = ftell(ataque);
+      fseek(ataque, posActual - (long)sizeof(tOrdenArchivo), SEEK_SET);
+      
+      tOrdenArchivo registroVacio = {};
+      fwrite(&registroVacio, sizeof(tOrdenArchivo), 1, ataque);
+      
+      fseek(ataque, posActual, SEEK_SET);
+    }
+  }
+
+  // Lógica para limpiar registros posteriores si cambia el aterrizaje / kamikaze
+  if (nuevaOrden.aterrizaje || nuevaOrden.ataqueKamikaze){
+    rewind(ataque);
+    tOrdenArchivo regActual;
+    long posActual;
+    bool empezarAEliminar = false;
+    
+    while (fread(&regActual, sizeof(tOrdenArchivo), 1, ataque) == 1) {
+      if (regActual.x == x && regActual.y == y) {
+        empezarAEliminar = true;
+        continue;
+      }
+      if (empezarAEliminar) {
+        bool eraFinViejo = regActual.aterrizaje || regActual.ataqueKamikaze;
+
+        posActual = ftell(ataque);
+        fseek(ataque, posActual - (long)sizeof(tOrdenArchivo), SEEK_SET);
+        
+        tOrdenArchivo registroVacio = {};
+        fwrite(&registroVacio, sizeof(tOrdenArchivo), 1, ataque);
+        
+        fseek(ataque, posActual, SEEK_SET);
+
+        if (eraFinViejo) {
+          break;
+        }
+      }
+   }
+  }
+
+  // <--- 3. SOLUCIÓN: Usamos la posición exacta guardada al inicio en lugar de SEEK_CUR
+  fseek(ataque, offsetRegistro, SEEK_SET);
   fwrite(&nuevaOrden, sizeof(tOrdenArchivo), 1, ataque);
   fclose(ataque);
 
