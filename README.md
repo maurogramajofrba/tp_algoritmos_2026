@@ -1,26 +1,43 @@
-# tp_algoritmos_2026
+# **Universidad Tecnológica Nacional — Facultad Regional Buenos Aires**
 
-## NO PUSHAR COSAS SIN COMPILAR PEDIR AYUDA Y HABLAR EN EL GRUPO
+## **Algoritmos y Estructuras de Datos** · Trabajo práctico grupal
 
-## Cómo arrancar a trabajar y hacer cambios?
+Docente: **Ing. Mendez**
+
+Curso: *K1054*
+
+| Legajo | Nombre | Apellido | Correo |
+| ------ | ------ | -------- | ------ |
+| 232.954-2 | Martín | de Llano Morales | mdellano@frba.utn.edu.ar |
+| 1437045 | Mauro Adrián | Gramajo | maurogramajo@frba.utn.edu.ar |
+| 203.753-1 | P. Andrés | Krasnokuki Rousseau | pkrasnokukirousseau@frba.utn.edu.ar |
+| 234.666-7 | Matias Fernando | Escobar mayta | mfescobar@frba.utn.edu.ar |
+
+[Ver informe del trabajo práctico (PDF)](Informe%20TP%20Grupal%20AyED%202026.pdf)
+
+---
+
+### NO PUSHAR COSAS SIN COMPILAR PEDIR AYUDA Y HABLAR EN EL GRUPO
+
+### Cómo arrancar a trabajar y hacer cambios?
 SIEMPRE HACER `git pull`
 1. Si hay conflictos y problemas hablar al grupo
 2. En caso de demorar mucho intentar resolverlo
 3. Consultar con chatGPT
 
-## Cómo compilar?
+### Cómo compilar?
 Ejecutar el siguiente comando
 ```cmd
 g++ *.cpp -o tp_ejecutable
 ```
 
-## Cómo ejecutar el programa?
+### Cómo ejecutar el programa?
 Ejecutar el siguiente comando
 ```cmd
 ./tp_ejecutable
 ```
 
-## Cómo agregar nuevos subprogramas?
+### Cómo agregar nuevos subprogramas?
 1. Crear el archivo del subprograma en la raiz. Ejemplo
     ```
     mostrar_ataque.cpp
@@ -28,7 +45,7 @@ Ejecutar el siguiente comando
 2. Agregar la interfaz del subprograma en **tp_lib.h**
 3. Volver a compilar el proyecto
 
-## Cómo agregar nuevas funciones comunes?
+### Cómo agregar nuevas funciones comunes?
 1. Crear la funcion en el archivo `funciones_comunes.cpp`.
     Ejemplo
     ```c++
@@ -39,7 +56,7 @@ Ejecutar el siguiente comando
 2. Agregar la interfaz de la función común en **funciones_comunes.h**
 3. Volver a compilar el proyecto
 
-## GIT comandos basicos
+### GIT comandos basicos
 1. `git pull` trae cambios de repo de la nube(remoto)
 2. `git status` te dice que archivos modificaste
 3. `git add .` agrega todos los archivos modificados a commitear

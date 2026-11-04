@@ -9,7 +9,7 @@ void ImprimirFilaHTML(FILE *htmlFile, tOrden orden, int x, int y);
 void VisualizarAtaqueHTML(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque,
                           std::string rutaArchivoEnMemoria) {
   if (pMapa == nullptr) {
-    cout << "- hay ataque cargado en memoria!!!" << endl;
+    cout << "No hay ataque cargado en memoria!!!" << endl;
     return;
   }
 
@@ -19,7 +19,7 @@ void VisualizarAtaqueHTML(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque,
   FILE *reporteHTML = fopen(ruta.string().c_str(), "w");
 
   if (!reporteHTML) {
-    cout << "- se pudo crear reporte html!!!" << endl;
+    cout << "No se pudo crear reporte html!!!" << endl;
     return;
   }
 
@@ -129,6 +129,8 @@ void VisualizarAtaqueHTML(tMapaAtaque *pMapa, tChecksAtaque *checksAtaque,
   fprintf(reporteHTML, "</html>\n");
 
   fclose(reporteHTML);
+  cout << "Se creo el reporte HTML en la misma ruta del archivo: "
+       << ruta.string() << endl;
   return;
 }
 
